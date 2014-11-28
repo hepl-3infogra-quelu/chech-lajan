@@ -1,8 +1,8 @@
 /* Chèch Lajan
  *
- * /models/terminal.js - Terminals MongoDB Model
+ * /models/terminal.js - Terminal MongoDB Model
  *
- * started @ 10/11/14
+ * started @ 03/11/14
  */
 
 "use strict";
@@ -11,7 +11,7 @@ var root = __dirname + "/..";
 
 var distance = require( "jeyo-distans" );
 
-module.exports = function( db, Mongoose, MongooseUtils ) {
+module.exports = function(db, Mongoose, MongooseUtils) {
 
     var oSchema = Mongoose.Schema( {
         "latitude": {
@@ -33,16 +33,17 @@ module.exports = function( db, Mongoose, MongooseUtils ) {
         }
     } );
 
-    oSchema.plugin( MongooseUtils.paranoid );
+    oSchema.plugin( MongooseUtils.paranoid);
 
     oSchema.methods.clean = function( oPosition ) {
         // cleaning empty state
-        if( this.empty ) {
-            if( this.updatedAt.getDate() !== ( new Date() ).getDate() ) {
+        if ( this.empty ) {
+            if (this.updatedAt.getDate() != ( new Date() ).getDate() ) {
                 this.empty = false;
                 this.save();
             }
         }
+
         return {
             "id": this.id,
             "date": this.createdAt,
@@ -50,11 +51,10 @@ module.exports = function( db, Mongoose, MongooseUtils ) {
             "longitude": this.longitude,
             "address": this.address,
             "empty": this.empty,
-            "distance": oPosition ? distance( oPosition, this ) : null,
+            "distance" : oPosition ? distance( oPosition, this ) : null,
             "bank": ( this.bank && typeof this.bank.clean === "function" ) ? this.bank.clean() : this.bank
-        };
+        }
     };
 
-    return db.model( "Terminal", oSchema );
-
+    return db.model ( "Terminal", oSchema )
 };

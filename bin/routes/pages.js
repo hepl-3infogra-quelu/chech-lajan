@@ -15,12 +15,13 @@ var homepage = function( oRequest, oResponse ) {
 // [GET] /jade.test - serving jade file for test purposes
 var showFirstJade = function( oRequest, oResponse ) {
     oResponse.render( "index.jade", {
-        firstname: "Pierre-Antoine",
-        lastname: "Delnatte",
-        age: 29,
+        firstname: "Luc",
+        lastname: "Matagne",
+        age: 22,
         cats: [
-            { name: "Skitty", gender: "female" },
-            { name: "Pixel", gender: "male" }
+            { name: "Eclypse", gender: "female" },
+            { name: "Lili", gender: "female" },
+            { name: "Luna", gender: "female" }
         ]
     } );
 };
