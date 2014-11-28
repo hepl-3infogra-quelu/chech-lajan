@@ -1,16 +1,17 @@
 {
-	"name": "Cash-Cache",
-	"version": "1.0.0",
-	"description": "Design perso Cash-Cache",
-	"author": "Luc Matagne",
-	"license": "ISC",
-	"dependencies": {},
-	"devDependencies": {
-		"grunt": "^0.4.5",
-		"grunt-contrib-clean": "^0.6.0",
-		"grunt-contrib-copy": "^0.7.0",
-		"grunt-contrib-jade": "^0.13.0",
-		"grunt-contrib-stylus": "^0.20.0",
-		"grunt-contrib-watch": "^0.6.1"
-	}
+  "name": "Cash-Cache",
+  "version": "1.0.0",
+  "description": "Design perso Cash-Cache",
+  "author": "Luc Matagne",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-copy": "^0.7.0",
+    "grunt-contrib-jade": "^0.13.0",
+    "grunt-contrib-stylus": "^0.20.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "kouto-swiss": "^0.11.6"
+  }
 }
