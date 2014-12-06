@@ -23,12 +23,22 @@
       "log": true
     }
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^3.2.1",
+    "grunt-contrib-uglify": "^0.6.0",
+    "grunt-contrib-watch": "^0.6.1"
+  },
   "dependencies": {
+    "backbone": "^1.1.2",
     "body-parser": "^1.9.2",
     "express": "^4.10.1",
+    "fastclick": "^1.0.3",
     "jade": "^1.7.0",
+    "jeolok": "^0.1.0",
     "jeyo-distans": "^0.2.0",
-    "mongoose": "^3.8.19"
+    "jquery": "^2.1.1",
+    "mongoose": "^3.8.19",
+    "underscore": "^1.7.0"
   }
 }

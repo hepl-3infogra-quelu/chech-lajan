@@ -1,0 +1,727 @@
+/*
+ * Cash-Cache - ATM Finder
+ *
+ * SASS/CSS Document - /styles/screen.css
+ *
+ * coded by leny @ flatLand!
+ * started at 06/06/13
+ */
+
+@import compass/reset
+@import compass
+
+@import fonts/lato
+$Lato: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif
+@import fonts/fontawesome
+$Icons: "FontAwesome"
+
+=keyframes( $name )
+    @-webkit-keyframes #{$name}
+        @content
+    @-moz-keyframes #{$name}
+        @content
+    @-ms-keyframes #{$name}
+        @content
+    @keyframes #{$name}
+        @content
+
++keyframes( rotation )
+    0%
+        +rotate( 0deg )
+    100%
+        +rotate( 360deg )
+
+*
+    -webkit-tap-highlight-color: rgba( 0, 0, 0, 0.5 )
+
+html, body
+    overflow: scroll
+    -webkit-overflow-scrolling: touch
+
+html
+    width: 100%
+    height: 100%
+    position: relative
+    background: black
+
+body
+    position: relative
+    width: 100%
+    height: 100%
+    font: normal 62.5%/1.5 $Lato
+    padding: 1px 0 50px
+    +box-sizing( border-box )
+
+#map-holder
+    position: absolute
+    width: 100%
+    height: 100%
+    z-index: 10
+    +box-sizing( border-box )
+    #gmap
+        width: 100%
+        height: 100%
+        &.blured
+            +filter( blur( 2px ) )
+            &:after
+                content: ""
+                width: 100%
+                height: 100%
+                background: transparent
+                position: absolute
+                top: 0
+                left: 0
+    &:after
+        content: ""
+        width: 100%
+        background: transparent
+        z-index: 11
+        height: 14px
+        position: absolute
+        bottom: 50px
+        left: 0
+
+#main
+    position: relative
+    width: 280px
+    // min-height: 340px
+    margin: 40px auto 0
+    z-index: 20
+    background: white
+    +box-shadow( 0 0 20px rgba( black, 0.5 ) )
+    +transition( all 0.35s ease-in-out )
+    header
+        position: relative
+        background: #E67E22
+        padding: 8px
+        h1
+            font: normal 2em $Lato
+            color: white
+        a
+            position: absolute
+            color: white
+            top: 11px
+            text-decoration: none
+            span
+                display: none
+            &#about
+                display: block
+                top: 8px
+                right: 9px
+                &:before
+                    content: ""
+                    font: normal 2.2em $Icons
+                &:after
+                    content: ""
+                    position: absolute
+                    display: block
+                    width: 40px
+                    height: 38px
+                    top: -8px
+                    left: -12px
+                    background: transparent
+            &#problems
+                display: none
+                top: 8px
+                right: 9px
+                &:before
+                    content: ""
+                    font: normal 2.2em $Icons
+                &:after
+                    content: ""
+                    position: absolute
+                    display: block
+                    width: 40px
+                    height: 38px
+                    top: -8px
+                    left: -12px
+                    background: transparent
+            &#back
+                display: none
+                left: 11px
+                &:before
+                    content: ""
+                    font: normal 1.6em $Icons
+                &:after
+                    content: ""
+                    position: absolute
+                    display: block
+                    width: 44px
+                    height: 44px
+                    top: -14px
+                    left: -14px
+                    background: transparent
+    #status
+        position: relative
+        padding: 10px 12px
+        background: #2C3E50
+        color: white
+        h3
+            font: 300 1.6em $Lato
+            strong
+                font-weight: normal
+        a
+            position: absolute
+            display: block
+            color: white
+            top: 0
+            right: 0
+            width: 38px
+            height: 38px
+            text-decoration: none
+            text-align: center
+            span
+                display: none
+            &:before
+                content: ""
+                font: normal 1.8em/38px $Icons
+                vertical-align: middle
+
+        &.loading
+            a
+                -webkit-animation: rotation 0.75s infinite linear
+                -moz-animation: rotation 0.75s infinite linear
+                animation: rotation 0.75s infinite linear
+    #result
+        position: relative
+        padding: 0 8px
+        max-height: 250px
+        overflow: scroll
+        -webkit-overflow-scrolling: touch
+        ul
+            li
+                border-bottom: 1px solid #ECF0F1
+                &:first-child
+                    border-top: 1px solid #ECF0F1
+                a
+                    display: block
+                    padding: 14px 5px
+                    text-decoration: none
+                    +pie-clearfix()
+                    img
+                        height: 16px
+                        vertical-align: middle
+                        margin: 0 5px 0 0
+                    strong
+                        font: bold 1.6em $Lato
+                        vertical-align: middle
+                        color: #333
+                    span
+                        font: 300 1.2em $Lato
+                        float: right
+                        margin: 4px 0 0
+                        color: #1ABC9C
+                &.empty
+                    a
+                        img
+                            display: none
+                        strong:before
+                            content: ""
+                            font: normal 1.0em $Icons
+                            margin: 0 5px 0 0
+                            vertical-align: middle
+        a#add-terminal, a#see-all
+            display: none
+            padding: 14px 5px
+            text-decoration: none
+            color: #999
+            strong
+                font: bold 1.6em $Lato
+                vertical-align: middle
+            &:before
+                vertical-align: middle
+                margin: 0 5px 0 0
+        a#add-terminal:before
+            content: ""
+            font: normal 1.6em $Icons
+            vertical-align: middle
+        a#see-all
+            &:before
+                content: ""
+                font: normal 1.6em $Icons
+            &.see-list:before
+                content: ""
+                font: normal 1.6em $Icons
+    #details
+        display: none
+        position: relative
+        padding: 8px 8px
+        min-height: 25px
+        h3
+            margin: 0 auto 3px
+            img
+                height: 16px
+                margin: 0 5px 0 0
+                vertical-align: middle
+            span
+                color: #333
+                font: bold 1.4em $Lato
+                vertical-align: middle
+        address
+            margin: 0 auto
+            padding: 0 50px 0 0
+            font: normal 1.2em/1.5 $Lato
+        div.empty
+            margin: 4px auto 0
+            p
+                display: inline-block
+                padding: 4px 6px 3px
+                font: normal 1.6em $Lato
+                background: #F39C12
+                color: white
+                &:before
+                    content: ""
+                    font: normal 1.0em $Icons
+                    margin: 0 3px 0 0
+                    vertical-align: middle
+        div.infos
+            position: absolute
+            bottom: 8px
+            right: 8px
+            span#distance
+                display: inline-block
+                padding: 4px 6px
+                font: normal 1.6em $Lato
+                background: #1ABC9C
+                color: white
+                margin: 0 2px 0 0
+                vertical-align: middle
+            a#refresh-me
+                position: relative
+                display: inline-block
+                padding: 5px 6px 4px
+                font: normal 1.6em $Icons
+                background: #1ABC9C
+                color: white
+                text-decoration: none
+                vertical-align: middle
+                span
+                    display: none
+                &:before
+                    content: ""
+                &:after
+                    content: ""
+                    position: absolute
+                    display: block
+                    width: 44px
+                    height: 44px
+                    top: -10px
+                    left: -10px
+                    background: transparent
+        div.problems
+            display: none
+            margin: 8px auto 0
+            border-top: 1px solid #BDC3C7
+            padding: 0 0 0
+            a
+                display: block
+                margin: 8px auto 0
+                padding: 6px 6px
+                font: normal 1.8em $Lato
+                text-align: center
+                background: lighten( #E67E22, 8% )
+                color: white
+                vertical-align: middle
+                text-decoration: none
+                &:first-child
+                    background: lighten( #E74C3C, 8% )
+        div.change_bank, div.change_place, div.confirm_problem
+            display: none
+            margin: 8px auto 0
+            border-top: 1px solid #BDC3C7
+            padding: 8px 0 0
+            p
+                font: normal 1.2em/1.5 $Lato
+                margin: 0 auto 3px
+            select
+                display: inline-block
+                width: 100%
+                min-height: 44px
+                vertical-align: middle
+            a
+                color: white
+                padding: 8px 6px
+                margin: 8px auto 8px
+                font: normal 1.5em $Lato
+                text-decoration: none
+                background: #34495E
+                border: 0
+                display: inline-block
+                width: 100%
+                cursor: pointer
+                text-transform: uppercase
+                +box-sizing( border-box )
+                text-align: center
+            input
+                display: inline-block
+                color: white
+                padding: 8px 6px
+                font: normal 1.5em $Lato
+                text-decoration: none
+                -webkit-appearance: none
+                background: #2ECC71 !important
+                +border-radius( 0 )
+                border: 0
+                width: 100%
+                cursor: pointer
+                text-transform: uppercase
+        div.change_place
+            border-top: 0
+            padding: 0
+    #adding
+        display: none
+        position: relative
+        padding: 8px 8px
+        h4
+            color: #E67E22
+            font: bold 1.4em $Lato
+            margin: 0 auto 3px
+        p
+            font: normal 1.2em/1.5 $Lato
+            margin: 0 auto 3px
+        form
+            .input
+                margin: 0 auto 8px
+                label
+                    display: inline-block
+                    width: 30%
+                    font: bold 1.4em $Lato
+                    color: #999
+                    vertical-align: middle
+                select
+                    display: inline-block
+                    width: 65%
+                    min-height: 44px
+                    vertical-align: middle
+            .buttons
+                +pie-clearfix()
+                a#refresh
+                    color: white
+                    padding: 8px 7px
+                    font: normal 1.5em $Lato
+                    text-decoration: none
+                    background: #95A5A6
+                    float: left
+                    vertical-align: middle
+                input
+                    border: 0
+                    color: white
+                    padding: 8px 7px
+                    font: normal 1.5em $Lato
+                    text-decoration: none
+                    -webkit-appearance: none
+                    background: #2ECC71 !important
+                    +border-radius( 0 )
+                    vertical-align: middle
+                    margin: 0
+                    float: right
+    #aboutbox
+        display: none
+        padding: 8px
+        p
+            font: normal 1.3em/1.5 $Lato
+            margin: 0 auto 3px
+        nav
+            margin: 8px auto
+            a
+                display: block
+                margin: 0 auto 12px 10px
+                font: normal 1.5em/34px $Lato
+                text-decoration: none
+                color: #3498DB
+                &:before
+                    display: inline-block
+                    margin: 0 5px 0 0
+                    font: normal 1.1em $Icons
+                    width: 22px
+                    text-align: center
+                    vertical-align: middle
+                &.twitter:before
+                    content: ""
+                &.facebook:before
+                    content: ""
+        hr
+            border: 0
+            height: 1px
+            background: #95A5A6
+            margin: 0 auto 5px
+        div
+            text-align: center
+            padding: 5px 0 0
+            a
+                display: block
+                img
+                    border: 0
+            span
+                display: block
+                font: normal 1.2em/1.5 $Lato
+            small
+                display: block
+                font: 300 1.1em/1.5 $Lato
+    &.see-all
+        margin: 20px auto 0
+        header a#about
+            display: none
+    &.details
+        margin: 20px auto 0
+        min-height: 0
+        header
+            #back
+                display: inline
+            h1
+                margin: 0 0 0 30px
+            a#about
+                display: none
+        #status
+            display: none
+        #result
+            display: none
+        #details
+            display: block
+        #aboutbox
+            display: none
+    &.adding
+        margin: 20px auto 0
+        min-height: 0
+        header
+            #back
+                display: inline
+            h1
+                margin: 0 0 0 30px
+            a#about
+                display: none
+        #status
+            display: none
+        #result
+            display: none
+        #details
+            display: none
+        #adding
+            display: block
+        #aboutbox
+            display: none
+    &.about
+        min-height: 0
+        header
+            #back
+                display: inline
+            h1
+                margin: 0 0 0 30px
+            a#about
+                display: none
+        #status
+            display: none
+        #result
+            display: none
+        #details
+            display: none
+        #adding
+            display: none
+        #aboutbox
+            display: block
+
+#ad-holder
+    position: absolute
+    bottom: 0
+    left: 0
+    width: 100%
+    height: 50px
+    background: grey
+    text-align: center
+    &:before
+        font: 300 1.6em/50px $Lato
+        color: white
+        content: "espace publicitaire"
+
+#warning
+    display: none
+
+#install-app
+    display: none
+    position: absolute
+    width: 100%
+    height: 100%
+    top: 0
+    left: 0
+    z-index: 100
+    background: transparent
+    .close
+        position: absolute
+        width: 100%
+        height: 100%
+        top: 0
+        left: 0
+        z-index: 150
+        background: transparent
+        text-indent: -999em
+    .box
+        $box-width: 60%
+        position: absolute
+        width: $box-width
+        bottom: 15px
+        left: 50%
+        margin: 0 0 0 ( -( $box-width / 2 ) )
+        z-index: 120
+        background: white
+        +box-shadow( 0 0 20px rgba( black, 0.5 ) )
+        h4
+            position: relative
+            background: #3498DB
+            padding: 8px
+            font: normal 1.6em $Lato
+            color: white
+        p
+            padding: 8px
+            font: normal 1.4em/1.5 $Lato
+            strong
+                font-weight: bold
+        &:after
+            content: ""
+            width: 0
+            height: 0
+            border: 10px solid transparent
+            border-top: 10px solid white
+            position: absolute
+            bottom: -20px
+            left: 50%
+            margin: 0 0 0 -10px
+
+#modal
+    display: none
+    position: absolute
+    z-index: 1000
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    padding: 1px 0 0
+    background: rgba( black, 0.8 )
+    a
+        display: block
+        background: transparent
+        width: 100%
+        height: 100%
+        position: absolute
+        top: 0
+        left: 0
+        z-index: 1200
+        color: transparent
+    .box
+        position: relative
+        width: 80%
+        background: white
+        margin: 40% auto 0
+        z-index: 1100
+        +box-shadow( 0 0 20px rgba( black, 0.5 ) )
+        h4
+            position: relative
+            background: #95A5A6
+            padding: 8px
+            font: 300 2em $Lato
+            color: white
+            text-transform: uppercase
+            &:before
+                content: ""
+                font: normal 1em $Icons
+                margin: 0 8px 0 0
+        div.message
+            padding: 8px
+            p
+                font: normal 1.4em/1.5 $Lato
+    &.error .box h4
+        background: #C0392B
+    &.success .box h4
+        background: #27AE60
+
+body.ios
+    min-height: 416px
+    &.big
+        min-height: 504px
+        #main #result
+            max-height: 320px
+
+body.android.old
+    overflow: visible
+    min-height: 0
+    #map-holder
+        position: fixed
+        height: 455px
+    #ad-holder
+        position: fixed
+    #main
+        #result
+            max-height: none
+            overflow: visible
+    &:after
+        content: ""
+        position: relative
+        width: 10px
+        background: transparent
+        height: 60px
+        display: block
+        margin: 0 auto
+
+@media screen and ( orientation: landscape ) and ( min-width: 480px ) and ( max-width: 1023px )
+    body
+        min-height: 300px
+        padding: 0
+        background: black image-url( "bcg.png" ) top left repeat
+    #map-holder, #main, #ad-holder
+        display: none
+    #warning
+        position: absolute
+        display: block
+        color: #eee
+        padding: 10% 0 0
+        +pie-clearfix()
+        h1
+            font: 300 2em $Lato
+            margin: 0 0 20px
+            float: left
+            width: 50%
+            text-align: center
+            text-shadow: 0 0 20px rgba( black, 0.75 )
+            img
+                display: block
+                margin: 0 auto 10px
+                +border-radius( 10px )
+                +box-shadow( 0 0 20px rgba( black, 0.75 ) )
+        p
+            padding: 2% 30px 0 0
+            text-shadow: 0 0 20px rgba( black, 0.75 )
+            font: normal 1em/1.25 $Lato
+
+@media screen and ( min-width: 1025px )
+    html, body
+        overflow: visible !important
+    html
+        background: black image-url( "bcg.png" ) top left repeat
+    body
+        width: 320px
+        height: ( 460px )
+        position: absolute
+        top: 50%
+        left: 50%
+        margin: -240px 0 0 -160px
+        font: normal 62.5%/1.5 $Lato
+        &:before
+            content: "L'application Cash-Cache est optimisée pour mobile. On fera une version tablet & desktop bientôt. Promis."
+            font: 300 1.6em/1.2 $Lato
+            color: #eee
+            text-shadow: 0 0 20px rgba( black, 0.75 )
+            position: absolute
+            left: -250px
+            top: 0px
+            width: 200px
+            padding: 0 0 90px
+            background: transparent image-url( "arrow.png" ) bottom center no-repeat
+            +rotate( -10deg )
+        &:after
+            position: absolute
+            left: -63px
+            top: -164px
+            display: block
+            content: ""
+            width: 440px
+            height: 770px
+            background: transparent image-url( "iphone.png" ) top left no-repeat

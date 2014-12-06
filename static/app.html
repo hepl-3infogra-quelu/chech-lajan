@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Cash-Cache</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+        <link rel="stylesheet" href="styles/screen.css" media="screen" />
+
+        <meta name="apple-mobile-web-app-title" content="Cash-Cache" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+        <link rel="apple-touch-icon-precomposed" href="images/icons/57.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/icons/72.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/icons/114.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/icons/144.png" />
+
+        <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 1)" href="images/startup/320x460.png" />
+        <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)" href="images/startup/640x920.png" />
+        <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" href="images/startup/640x1096.png" />
+    </head>
+    <body>
+        <div id="map-holder">
+            <div id="gmap"></div>
+        </div>
+        <div id="main">
+            <!-- <header></header> -->
+            <!-- <section id="status"></section> -->
+            <!-- <section id="result"></section> -->
+            <!-- <section id="details"></section> -->
+            <!-- <section id="aboutbox"></section> -->
+        </div>
+        <div id="modal">
+            <a href="#">retour</a>
+            <div class="box">
+                <h4>Oups !</h4>
+                <div class="message">
+                    <p>Une erreur inconnue (woaw, vous êtes fort !) a eu lieu. Nous sommes vraiment désolé. Veuillez réessayer.</p>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/template" id="tpl-header">
+            <a href="#" id="back">
+                <span>retour</span>
+            </a>
+            <h1>
+                Cash-Cache
+            </h1>
+            <a href="#" id="about">
+                <span>paramètres</span>
+            </a>
+            <a href="#" id="problems">
+                <span>problèmes</span>
+            </a>
+        </script>
+
+        <script type="text/template" id="tpl-status">
+            <h3></h3>
+            <a href="#" id="reload">
+                <span>recharger</span>
+            </a>
+        </script>
+
+        <script type="text/template" id="tpl-result">
+            <a href="#" id="see-all">
+                <strong>Voir tous les distributeurs…</strong>
+            </a>
+            <ul></ul>
+        </script>
+
+        <script type="text/template" id="tpl-result-list-elt">
+            <a href="#">
+                <img src="" alt="" width="16" height="16" />
+                <strong></strong>
+                <span></span>
+            </a>
+        </script>
+
+        <script type="text/template" id="tpl-details">
+            <h3>
+                <img src="" alt="" width="16" height="16" />
+                <span></span>
+            </h3>
+            <address></address>
+            <div class="empty">
+                <p>Vide ou en panne !</p>
+            </div>
+            <div class="infos">
+                <span id="distance"></span>
+                <a href="#" id="refresh-me">
+                    <span>Recharger ma positions</span>
+                </a>
+            </div>
+            <div class="problems">
+                <a href="#" id="empty_terminal">Distributeur vide ou en panne</a>
+                <a href="#" id="no_terminal">Pas de distributeur ici</a>
+                <a href="#" id="wrong_place">Mauvaise localisation sur la carte</a>
+                <a href="#" id="wrong_bank">Mauvaise banque</a>
+                <a href="#" id="duplicate_terminal">Distributeur en double</a>
+            </div>
+            <div class="confirm_problem">
+                <form action="javascript:void(0);">
+                    <fieldset>
+                        <p>__explain__</p>
+                        <input type="submit" value="__save__" />
+                    </fieldset>
+                </form>
+            </div>
+        </script>
+
+        <script type="text/template" id="tpl-aboutbox">
+            <p>Une question ? Une remarque ? Besoin d'aide ?</p>
+            <p>Rejoignez-nous sur facebook ou twitter, nous répondrons à toutes vos questions !</p>
+            <nav>
+                <a href="https://www.facebook.com/cashcacheapp" rel="external" class="facebook">Cash-Cache sur facebook</a>
+                <a href="https://twitter.com/CashCacheApp" rel="external" class="twitter">Cash-Cache sur twitter</a>
+            </nav>
+            <hr />
+            <div>
+                <a href="http://flatland.be">
+                    <img src="styles/images/flatland.svg" width="200" alt="flatLand!" />
+                </a>
+                <span>made in Belgium</span>
+                <small>&copy;2013 - webapp v1.4.1</small>
+            </div>
+        </script>
+
+        <script src="js/libs.min.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8gURibWOA062RxYD4DAFB9QiogtRoHgI&amp;sensor=false"></script>
+        <script>
+            window.app = {
+                "id": "chech-lajan",
+                "name": "Chèch Lajan",
+                "version": "0.0.1"
+            };
+        </script>
+        <script src="js/app.min.js"></script>
+    </body>
+</html>
