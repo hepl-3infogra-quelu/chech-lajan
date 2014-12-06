@@ -32,7 +32,9 @@ module.exports = function (grunt) {
 					"pretty": true
 				},
 				"files": {
-					"bin/index.html": "src/jade/index.jade"
+					"bin/index.html": "src/jade/index.jade",
+					"bin/list.html": "src/jade/list.jade",
+					"bin/detail.html": "src/jade/detail.jade"
 				}
 			}
 		},
@@ -52,7 +54,7 @@ module.exports = function (grunt) {
 		"watch": {
 			"styles": {
 				"files": ["src/styl/*.styl"],
-				"tasks": ["stylus"]
+				"tasks": ["stylus", "copy:images"]
 			},
 			"jades": {
 				"files": ["src/jade/*.jade"],
