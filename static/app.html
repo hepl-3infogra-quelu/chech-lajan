@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+
+    <title>Cash-Cache</title>
+
+    <link rel="stylesheet" type="text/css" href="css/styles.css"/>
+</head>
+<body>
+    <header></header>
+
+    <div id="map-canvas"></div>
+
+    <!-- Template for header -->
+    <script type="text/template" id="tpl-header">
+        <h1>Cash-Cache</h1>
+        <nav>
+            <a href="" class="list">
+                <span class="text">Distributeurs proches</span>
+            </a>
+            <a href="" class="add">
+                <span class="text">Ajouter un distributeur</span>
+            </a>
+        </nav>
+    </script>
+
+    <!-- Template for results -->
+    <script type="text/template" id="tpl-result">
+        <div class="overlay">
+            <div class="container"><a href="index.html" class="back">Retour</a>
+                <h2>3 distributeurs proches</h2>
+                <ul></ul>
+            </div>
+        </div>
+    </script>
+
+    <!-- Template for result list item -->
+    <script type="text/template" id="tpl-result-list-elt">
+        <li>
+            <a href="">
+                <img src="" alt=""/>
+                <strong></strong>
+                <span></span>
+            </a>
+        </li>
+    </script>
+
+    <!-- Template for detail result -->
+    <script type="text/template" id="tpl-details">
+        <div class="container small"><a href="list.html" class="back">Retour</a>
+            <div class="info">
+                <h2>
+                    <img src="" alt="" />
+                </h2>
+                <address></address>
+                <div class="empty"></div>
+                <div class="problems">
+                    <a href="#" id="empty_terminal">Distributeur vide ou en panne</a>
+                    <a href="#" id="no_terminal">Pas de distributeur ici</a>
+                    <a href="#" id="wrong_place">Mauvaise localisation sur la carte</a>
+                    <a href="#" id="wrong_bank">Mauvaise banque</a>
+                    <a href="#" id="duplicate_terminal">Distributeur en double</a>
+                </div>
+                <div class="confirm_problem">
+                    <form action="javascript:void(0);">
+                        <fieldset>
+                            <p>__explain__</p>
+                            <input type="submit" value="__save__" />
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script src="js/libs.min.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBNV1rxti4vR6khDSlCBIOTj_Pvc_xF5AI"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+
+</body>
+</html>

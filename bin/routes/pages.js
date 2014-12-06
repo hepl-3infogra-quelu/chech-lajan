@@ -9,7 +9,7 @@
 
 // [GET] / - homepage
 var homepage = function( oRequest, oResponse ) {
-    oResponse.json( "Hello, World!" );
+    oResponse.sendFile( require( "path" ).resolve( root + "/../static/app.html" ) );
 };
 
 // [GET] /jade.test - serving jade file for test purposes
