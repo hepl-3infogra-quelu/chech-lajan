@@ -1,87 +1,92 @@
-"use strict";
+(function ( $ ) {
+	"use strict";
 
-(function () {
-	var map;
+	var gMap,
+		$map;
 
-	function initialize() {
-		var mapOptions = {
-			zoom: 8,
-			center: new google.maps.LatLng(50.846686, 4.352425),
+	var _initMap = function () {
+		var oMapOptions = {
+			zoom: 15,
 			disableDefaultUI: true,
-			zoomControl: true
+			zoomControl: true,
+			scrollWheel: false
 		};
-		map = new google.maps.Map(document.getElementById('map-canvas'),
-			mapOptions);
+		gMap = new google.maps.Map( $map[ 0 ], oMapOptions );
 	}
 
-	function setNewMarker(position, type) {
-		var pos = new google.maps.LatLng(position.coords.latitude,
-			position.coords.longitude);
+	var _newMarker = function(oPosition, sType, sAnimation) {
+		var sAnimation = (sAnimation)? sAnimation : 'DROP';
 
-		var image = 'img/marker-' + type + '.png';
-
-		var marker = new google.maps.Marker({
-			position: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
-			map: map,
-			animation: google.maps.Animation.DROP,
-			icon: image
+		new google.maps.Marker({
+			position: new google.maps.LatLng(oPosition.coords.latitude, oPosition.coords.longitude),
+			map: gMap,
+			animation: google.maps.Animation[ sAnimation.toUpperCase() ],
+			icon: 'img/marker-' + sType + '.png'
 		});
 	}
 
-	function handleNoGeolocation(errorFlag) {
-		if (errorFlag) {
-			var content = 'Error: The Geolocation service failed.';
-		} else {
-			var content = 'Error: Your browser doesn\'t support geolocation.';
-		}
+	var _populateMap = function() {
+		
+	};
 
-		var options = {
-			map: map,
-			position: new google.maps.LatLng(60, 105),
-			content: content
+	var _getPositionSuccess = function(oPosition) {
+		var oPos = new google.maps.LatLng(oPosition.coords.latitude,
+					oPosition.coords.longitude);
+
+		var oPosition2 = {
+			coords: {
+				latitude: oPosition.coords.latitude - 0.001,
+				longitude: oPosition.coords.longitude + 0.007
+			}
+		};
+		var oPosition3 = {
+			coords: {
+				latitude: oPosition.coords.latitude - 0.005,
+				longitude: oPosition.coords.longitude - 0.00546
+			}
+		};
+		var oPosition4 = {
+			coords: {
+				latitude: oPosition.coords.latitude + 0.004,
+				longitude: oPosition.coords.longitude + 0.0042
+			}
 		};
 
-		var infowindow = new google.maps.InfoWindow(options);
-		map.setCenter(options.position);
-	}
-	window.onload = function () {
-		initialize();
+		_newMarker(oPosition, 'me', 'bounce');
+		_newMarker(oPosition2, 'money');
+		_newMarker(oPosition3, 'empty');
+		_newMarker(oPosition4, 'broke');
 
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(function (position) {
-				var pos = new google.maps.LatLng(position.coords.latitude,
-					position.coords.longitude);
+		_populateMap();
 
-				setNewMarker(position, 'me');
-				var position2 = {
-					coords: {
-						latitude: 50.5289202,
-						longitude: 5.7160795
-					}
-				};
-				var position3 = {
-					coords: {
-						latitude: 50.5220202,
-						longitude: 5.7160495
-					}
-				};
-				var position4 = {
-					coords: {
-						latitude: 50.5320452,
-						longitude: 5.7264295
-					}
-				};
-				setNewMarker(position2, 'money');
-				setNewMarker(position3, 'empty');
-				setNewMarker(position4, 'broke');
+		gMap.setCenter(oPos);
+	};
 
-				map.setCenter(pos);
-			}, function () {
-				handleNoGeolocation(true);
-			});
+	var _getPositionError = function(oError) {
+		if (oError) {
+			var sContent = 'Error: Le service de géolocalisation a rencontré une erreur.';
 		} else {
-			handleNoGeolocation(false);
+			var sContent = 'Error: Votre navigateur ne supporte pas la géolocalisation.';
 		}
-	}
 
-})();
+		var oOptions = {
+			map: gMap,
+			position: new google.maps.LatLng(60, 105),
+			content: sContent
+		};
+
+		var infowindow = new google.maps.InfoWindow(oOptions);
+		gMap.setCenter(oOptions.position);
+	};
+
+	$( function() {
+		$map = $( '#map-canvas' );
+		_initMap();
+
+		navigator.geolocation && 
+		navigator.geolocation.getCurrentPosition( _getPositionSuccess, _getPositionError, {
+			"enableHighAccuracy": true
+		} );
+	} );
+
+})( jQuery );
