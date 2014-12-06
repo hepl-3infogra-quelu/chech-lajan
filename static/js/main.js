@@ -25,39 +25,11 @@
 		});
 	}
 
-	var _populateMap = function() {
-		
-	};
-
 	var _getPositionSuccess = function(oPosition) {
 		var oPos = new google.maps.LatLng(oPosition.coords.latitude,
 					oPosition.coords.longitude);
 
-		var oPosition2 = {
-			coords: {
-				latitude: oPosition.coords.latitude - 0.001,
-				longitude: oPosition.coords.longitude + 0.007
-			}
-		};
-		var oPosition3 = {
-			coords: {
-				latitude: oPosition.coords.latitude - 0.005,
-				longitude: oPosition.coords.longitude - 0.00546
-			}
-		};
-		var oPosition4 = {
-			coords: {
-				latitude: oPosition.coords.latitude + 0.004,
-				longitude: oPosition.coords.longitude + 0.0042
-			}
-		};
-
 		_newMarker(oPosition, 'me', 'bounce');
-		_newMarker(oPosition2, 'money');
-		_newMarker(oPosition3, 'empty');
-		_newMarker(oPosition4, 'broke');
-
-		_populateMap();
 
 		gMap.setCenter(oPos);
 	};
@@ -83,7 +55,7 @@
 		$map = $( '#map-canvas' );
 		_initMap();
 
-		navigator.geolocation && 
+		navigator.geolocation &&
 		navigator.geolocation.getCurrentPosition( _getPositionSuccess, _getPositionError, {
 			"enableHighAccuracy": true
 		} );
