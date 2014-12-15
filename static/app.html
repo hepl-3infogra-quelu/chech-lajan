@@ -9,35 +9,38 @@
     <link rel="stylesheet" type="text/css" href="css/styles.css"/>
 </head>
 <body>
-    <header></header>
+    <div id="main">
+        <!-- header insertion point -->
+        <!-- list insertion point -->
+        <!-- details insertion point -->
+    </div>
 
     <div id="map-canvas"></div>
 
-    <!-- Template for header -->
     <script type="text/template" id="tpl-header">
+        <!-- Template for header -->
         <h1>Cash-Cache</h1>
         <nav>
-            <a href="" class="list">
+            <a href="" class="list" id="list">
                 <span class="text">Distributeurs proches</span>
             </a>
-            <a href="" class="add">
+            <a href="" class="add"id="add">
                 <span class="text">Ajouter un distributeur</span>
             </a>
         </nav>
     </script>
 
-    <!-- Template for results -->
     <script type="text/template" id="tpl-result">
-        <div class="overlay">
-            <div class="container"><a href="index.html" class="back">Retour</a>
-                <h2>3 distributeurs proches</h2>
-                <ul></ul>
-            </div>
+        <!-- Template for results -->
+        <div class="container">
+            <a href="index.html" class="back">Retour</a>
+            <h2>3 distributeurs proches</h2>
+            <ul></ul>
         </div>
     </script>
 
-    <!-- Template for result list item -->
     <script type="text/template" id="tpl-result-list-elt">
+        <!-- Template for result list item -->
         <li>
             <a href="">
                 <img src="" alt=""/>
@@ -47,8 +50,8 @@
         </li>
     </script>
 
-    <!-- Template for detail result -->
     <script type="text/template" id="tpl-details">
+        <!-- Template for detail result -->
         <div class="container small"><a href="list.html" class="back">Retour</a>
             <div class="info">
                 <h2>
@@ -78,7 +81,15 @@
     <script src="js/libs.min.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBNV1rxti4vR6khDSlCBIOTj_Pvc_xF5AI"></script>
     <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="js/main.js"></script>
+    <script>
+        window.app = {
+            "id": "chech-lajan",
+            "name": "Chech Lajan",
+            "version": "0.0.1",
+            "api_url": "http://chech-lajan.local"
+        }
+    </script>
+    <script type="text/javascript" src="js/app.min.js"></script>
 
 </body>
 </html>
