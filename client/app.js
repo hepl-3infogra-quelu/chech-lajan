@@ -10,6 +10,7 @@
 var _           = require( "underscore" ),
     $           = require( "jquery" ),
     FastClick   = require( "fastclick" ),
+    jeolok      = require( "jeolok" ),
     Router      = require( "./router" );
 
 window.app.now = new Date();

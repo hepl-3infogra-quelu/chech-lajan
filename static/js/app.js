@@ -11,6 +11,7 @@
 var _           = require( "underscore" ),
     $           = require( "jquery" ),
     FastClick   = require( "fastclick" ),
+    jeolok      = require( "jeolok" ),
     Router      = require( "./router" );
 
 window.app.now = new Date();
@@ -26,7 +27,7 @@ $( function() {
 
 } );
 
-},{"./router":4,"fastclick":"fastclick","jquery":"jquery","underscore":"underscore"}],2:[function(require,module,exports){
+},{"./router":4,"fastclick":"fastclick","jeolok":"jeolok","jquery":"jquery","underscore":"underscore"}],2:[function(require,module,exports){
 /* Chèch Lajan
 *
 * /collections/terminals.js - backbone collections for terminal
@@ -38,6 +39,7 @@ $( function() {
 
 var _             = require( "underscore" ),
     $             = require( "jquery" ),
+    jeolok        = require( "jeolok" ),
     BackBone      = require( "backbone" );
 
 BackBone.$    = require( "jquery" );
@@ -54,7 +56,7 @@ module.exports = BackBone.Collection.extend({
 
 });
 
-},{"../models/terminal":3,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],3:[function(require,module,exports){
+},{"../models/terminal":3,"backbone":"backbone","jeolok":"jeolok","jquery":"jquery","underscore":"underscore"}],3:[function(require,module,exports){
 /* Chèch Lajan
 *
 * /models/terminal.js - backbone model for terminal
@@ -65,6 +67,7 @@ module.exports = BackBone.Collection.extend({
 "use strict";
 
 var _             = require( "underscore" ),
+    jeolok        = require( "jeolok" ),
     $             = require( "jquery" ),
     BackBone      = require( "backbone" );
 
@@ -77,17 +80,17 @@ module.exports = BackBone.Model.extend( {
     parse: function (oResponse) {
         // TODO handle errors
         if (oResponse.data && oResponse.url) {
-            return oReponse.data
+            return oResponse.data
         }
         else {
-            return oReponse
+            return oResponse
         }
         return oResponse.data;
     }
 
 });
 
-},{"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],4:[function(require,module,exports){
+},{"backbone":"backbone","jeolok":"jeolok","jquery":"jquery","underscore":"underscore"}],4:[function(require,module,exports){
 /* Chèch Lajan
 *
 * /router.js - backbone router
@@ -100,6 +103,7 @@ module.exports = BackBone.Model.extend( {
 
 var _             = require( "underscore" ),
     $             = require( "jquery" ),
+    jeolok        = require( "jeolok" ),
     BackBone      = require( "backbone" );
 
 BackBone.$    = require( "jquery" );
@@ -107,7 +111,9 @@ BackBone.$    = require( "jquery" );
 var MainView = require( "./views/main" );
 var HeaderView = require( "./views/header" );
 var TerminalsListView = require( "./views/terminals-list" );
+var TerminalDetailsView = require( "./views/terminal-details" );
 
+var TerminalModel = require( "./models/terminal" );
 var TerminalsCollection = require( "./collections/terminals" );
 
 var oPosition;
@@ -120,7 +126,7 @@ module.exports = BackBone.Router.extend( {
     routes: {
         "terminals/list": "showTerminalsList",
         "terminals/map": "showTerminalsMap",
-        "terminals/details/:id": "showTerminalsDetails",
+        "terminals/details/:id": "showTerminalDetails",
         "": "showTerminalsList"
     },
 
@@ -131,13 +137,16 @@ module.exports = BackBone.Router.extend( {
 
         // 2. get geopos
         jeolok.getCurrentPosition( {"enableHighAccuracy": true}, function (oError, oGivenPosition){
-            console.log(oGivenPosition);
+            // console.log(oGivenPosition);
             if (oError) {
                 console.log ("oups..");
                 oPosition = {
-                    lattitude: 50.84274,
+                    latitude: 50.84274,
                     longitude: 4.35154
                 }
+            }
+            else {
+                oPosition = oGivenPosition.coords;
             }
         } );
 
@@ -152,19 +161,21 @@ module.exports = BackBone.Router.extend( {
 
         var that = this;
         this.views.main.loading(true);
-        var oTerminalsCollection = TerminalsCollection( oPosition );
+        var oTerminalsCollection = new TerminalsCollection( oPosition );
         ( this.views.list = new TerminalsListView( oTerminalsCollection ) )
             .collection
                 .fetch( {
                     data: {
-                        latitude: oPosition.latitude,
-                        longitude: oPosition.longitude
+                        latitude: 50.84274,
+                        longitude: 4.35154
+                        // latitude: oPosition.latitude,
+                        // longitude: oPosition.longitude
                     },
                     success: function () {
                         console.log( "collection fetch done" )
                         that.views.main.clearContent();
                         that.views.main.initList( that.views.list.render() );
-                        that.views.main.loading(false);
+                        that.views.main.loading( false );
                     }
                 } );
     },
@@ -173,12 +184,25 @@ module.exports = BackBone.Router.extend( {
         console.log( "showTerminalsMap" );
     },
 
-    showTerminalsDetails: function () {
-        console.log( "showTerminalsDetails" );
+    showTerminalDetails: function ( sTerminalId ) {
+        console.log( "showTerminalDetails:", sTerminalId );
+        var that = this;
+        this.views.main.loading( true );
+        var oTerminal = new TerminalModel( { id: sTerminalId } );
+        (this.views.details = new TerminalDetailsView( oTerminal ) )
+            .model
+                .fetch( {
+                    success: function () {
+                        that.views.main.clearContent();
+                        that.views.main.initDetails( that.views.details.render() );
+                        console.log( "Model successfully fetched" )
+                        this.views.main.loading( false );
+                    }
+                } );
     }
 } );
 
-},{"./collections/terminals":2,"./views/header":5,"./views/main":6,"./views/terminals-list":8,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],5:[function(require,module,exports){
+},{"./collections/terminals":2,"./models/terminal":3,"./views/header":5,"./views/main":6,"./views/terminal-details":7,"./views/terminals-list":9,"backbone":"backbone","jeolok":"jeolok","jquery":"jquery","underscore":"underscore"}],5:[function(require,module,exports){
 /* Chèch Lajan
 *
 * /views/header.js - backbone header view
@@ -261,19 +285,98 @@ module.exports = BackBone.View.extend({
     },
 
     clearContent: function () {
-        console.log("TODO: clearContent");
+        // Cette méthode sert à vider les vues avant d'en rajouter de nouvelles
+        this.$el.find("#main div").remove();
     },
-    
+
     initHeader: function ( HeaderView ) {
         this.$el.find( "#main" ).append( HeaderView.$el );
     },
 
-    initList: function () {
-        console.log("TODO: initList");
+    initList: function ( TerminalListView ) {
+        this.$el.find( "#main" ).append( TerminalListView.$el );
+    },
+
+    initDetails: function ( TerminalDetailsView ) {
+        this.$el.find( "#main" ).append( TerminalDetailsView.$el );
     }
 });
 
 },{"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],7:[function(require,module,exports){
+/* Chèch Lajan
+*
+* /views/terminal-details.js - backbone terminals details view
+*
+* started @ 19/12/14
+*/
+
+
+"use strict";
+
+var _             = require( "underscore" ),
+    $             = require( "jquery" ),
+    BackBone      = require( "backbone" ),
+    jeyodistans   = require( "jeyo-distans" );
+
+BackBone.$    = require( "jquery" );
+
+var _tpl;
+
+module.exports = BackBone.View.extend({
+
+    el: "<div />",
+
+    constructor: function (oTerminalModel) {
+        BackBone.View.apply( this, arguments );
+
+        this.model = oTerminalModel;
+
+        console.log( "TerminalDetailsView:init()" );
+
+        if ( !_tpl ) {
+            _tpl = $("#tpl-details").remove().text();
+        }
+    },
+
+    events: {
+        "click .problems a": "toggleEmptyState"
+    },
+
+    render: function () {
+        var oBank = this.model;
+
+        this.$el
+            .attr( "class", "overlay" )
+            .html( _tpl )
+            .find("h2")
+            .css("color", "#" + oBank.color)
+            .text((oBank && oBank.name) ? oBank.name : "Inconnu")
+            .end()
+                .find("h2 img")
+                    .attr( "src", "banks/" + oBank.icon )
+                    .attr( "alt", (oBank && oBank.name) ? oBank.name : "Inconnu" )
+                    .end()
+            .find( "span" )
+                .text( ( parseFloat( this.model.distance ) * 1000 ) + "m" )
+            .find( ".empty" )
+                .toggle(this.model.get("empty"))
+                .end()
+            ;
+        return this;
+    },
+
+    toggleEmptyState: function () {
+        a.preventDefault();
+        this.model.set( "empty", false);
+        this.model.save(null, {
+            success: function () {
+
+            }
+        })
+    }
+});
+
+},{"backbone":"backbone","jeyo-distans":"jeyo-distans","jquery":"jquery","underscore":"underscore"}],8:[function(require,module,exports){
 /* Chèch Lajan
 *
 * /views/terminal-list-element.js - backbone terminals element view
@@ -286,6 +389,7 @@ module.exports = BackBone.View.extend({
 
 var _             = require( "underscore" ),
     $             = require( "jquery" ),
+    jeolok        = require( "jeolok" ),
     BackBone      = require( "backbone" );
 
 BackBone.$    = require( "jquery" );
@@ -298,11 +402,14 @@ module.exports = BackBone.View.extend({
 
     constructor: function (oTerminalModel) {
         BackBone.View.apply( this, arguments );
+
         this.model = oTerminalModel;
 
         console.log( "TerminalListElementView:init()" );
 
-        _tpl = $("#tpl-result-list-elt").remove().text();
+        if ( !_tpl ) {
+            _tpl = $("#tpl-result-list-elt").remove().text();
+        }
     },
 
     events: {
@@ -315,12 +422,12 @@ module.exports = BackBone.View.extend({
             .html( _tpl )
             .find("a")
                 .find("img")
-                    .attr("src", "images/banks/" + oBank.icon + ".png")
-                    .attr("alt", oBank.name)
+                    .attr( "src", "banks/" + oBank.icon )
+                    .attr("alt", (oBank && oBank.name) ? oBank.name : "Inconnu")
                     .end()
                 .find("strong")
                     .css("color", "#" + oBank.color)
-                    .text(oBank.name)
+                    .text((oBank && oBank.name) ? oBank.name : "Inconnu")
                     .end()
                 .find("span")
                     .text( ( parseFloat( this.model.distance ) * 1000 ) + "m" );
@@ -329,11 +436,11 @@ module.exports = BackBone.View.extend({
 
     showTerminal: function (e) {
         e.preventDefault();
-        console.log( "TODO: showTerminal" );
+        window.app.router.navigate( "terminals/details/" + this.model.get( "id" ), {trigger: true} );
     }
 });
 
-},{"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],8:[function(require,module,exports){
+},{"backbone":"backbone","jeolok":"jeolok","jquery":"jquery","underscore":"underscore"}],9:[function(require,module,exports){
 /* Chèch Lajan
 *
 * /views/terminal-list.js - backbone terminals list view
@@ -357,12 +464,16 @@ module.exports = BackBone.View.extend({
 
     el: "<div />",
 
-    constructor: function () {
+    constructor: function (oTerminalsCollection) {
         BackBone.View.apply( this, arguments );
+
+        this.collection = oTerminalsCollection;
 
         console.log( "TerminalListView:init()" );
 
-        _tpl = $("#tpl-result").remove().text();
+        if (!_tpl) {
+            _tpl = $("#tpl-result").remove().text();
+        }
     },
 
     events: {},
@@ -371,15 +482,14 @@ module.exports = BackBone.View.extend({
             .attr( "class", "overlay" )
             .html( _tpl );
 
-        var list = this.$em.find( "ul" );
+        var list = this.$el.find( "ul" );
+        console.log ("list");
         this.collection.each( function ( oTerminalModel ) {
-            list.append( (new TerminalElementView( oTerminalModel ) ).render().$el );
+            list.append( ( new TerminalElementView( oTerminalModel ) ).render().$el );
         } );
-
-        // TODO fill list with terminals
 
         return this;
     }
 });
 
-},{"./terminals-list-element":7,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}]},{},[1]);
+},{"./terminals-list-element":8,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}]},{},[1]);

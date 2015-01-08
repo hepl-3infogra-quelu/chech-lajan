@@ -38,14 +38,19 @@ module.exports = BackBone.View.extend({
     },
 
     clearContent: function () {
-        console.log("TODO: clearContent");
+        // Cette méthode sert à vider les vues avant d'en rajouter de nouvelles
+        this.$el.find("#main div").remove();
     },
-    
+
     initHeader: function ( HeaderView ) {
         this.$el.find( "#main" ).append( HeaderView.$el );
     },
 
-    initList: function () {
-        console.log("TODO: initList");
+    initList: function ( TerminalListView ) {
+        this.$el.find( "#main" ).append( TerminalListView.$el );
+    },
+
+    initDetails: function ( TerminalDetailsView ) {
+        this.$el.find( "#main" ).append( TerminalDetailsView.$el );
     }
 });

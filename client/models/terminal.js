@@ -8,6 +8,7 @@
 "use strict";
 
 var _             = require( "underscore" ),
+    jeolok        = require( "jeolok" ),
     $             = require( "jquery" ),
     BackBone      = require( "backbone" );
 
@@ -20,10 +21,10 @@ module.exports = BackBone.Model.extend( {
     parse: function (oResponse) {
         // TODO handle errors
         if (oResponse.data && oResponse.url) {
-            return oReponse.data
+            return oResponse.data
         }
         else {
-            return oReponse
+            return oResponse
         }
         return oResponse.data;
     }

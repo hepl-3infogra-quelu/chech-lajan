@@ -9,6 +9,7 @@
 
 var _             = require( "underscore" ),
     $             = require( "jquery" ),
+    jeolok        = require( "jeolok" ),
     BackBone      = require( "backbone" );
 
 BackBone.$    = require( "jquery" );

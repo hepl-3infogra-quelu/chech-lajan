@@ -64,13 +64,13 @@ module.exports = function( grunt ) {
     } );
 
     grunt.registerTask( "default", [
-    "browserify",
-    "uglify"
+        "browserify",
+        "uglify"
     ] );
 
     grunt.registerTask( "work", [
-    "default",
-    "watch"
+        "default",
+        "watch"
     ] );
 
 };

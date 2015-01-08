@@ -21,12 +21,16 @@ module.exports = BackBone.View.extend({
 
     el: "<div />",
 
-    constructor: function () {
+    constructor: function (oTerminalsCollection) {
         BackBone.View.apply( this, arguments );
+
+        this.collection = oTerminalsCollection;
 
         console.log( "TerminalListView:init()" );
 
-        _tpl = $("#tpl-result").remove().text();
+        if (!_tpl) {
+            _tpl = $("#tpl-result").remove().text();
+        }
     },
 
     events: {},
@@ -35,12 +39,11 @@ module.exports = BackBone.View.extend({
             .attr( "class", "overlay" )
             .html( _tpl );
 
-        var list = this.$em.find( "ul" );
+        var list = this.$el.find( "ul" );
+        console.log ("list");
         this.collection.each( function ( oTerminalModel ) {
-            list.append( (new TerminalElementView( oTerminalModel ) ).render().$el );
+            list.append( ( new TerminalElementView( oTerminalModel ) ).render().$el );
         } );
-
-        // TODO fill list with terminals
 
         return this;
     }

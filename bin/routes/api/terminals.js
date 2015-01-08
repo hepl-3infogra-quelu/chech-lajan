@@ -36,7 +36,7 @@ var list = function( oRequest, oResponse ) {
         iGivenRadius = 5;
     }
     iSearchRadiusSize = iArcKilometer * iGivenRadius;
-    
+
     Terminal
         .find( {
             "latitude": {
@@ -90,8 +90,25 @@ var empty = function( oRequest, oResponse ) {
         });
 };
 
+var details = function( oRequest, oResponse ) {
+    Terminal
+        .findById( oRequest.params.id )
+        .populate("bank")
+        .exec(function( oError, oTerminal ) {
+            if ( !oTerminal ) {
+                return api.error( oRequest, oResponse, "TERMINAL_UNKNOWN" );
+            }
+            if ( oError ) {
+                return api.error( oRequest, oResponse, oError.type, oError );
+            }
+            oTerminal.empty = true;
+            api.send( oRequest, oRespose, oTerminal.clean() );
+        });
+};
+
 // Declare routes
 exports.init = function ( oApp ) {
     oApp.get ( "/api/terminals", list );
+    oApp.get ( "/api/terminals/:id", details );
     oApp.put ( "/api/terminals/:id/empty", empty );
 }

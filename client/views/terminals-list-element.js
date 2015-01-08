@@ -10,6 +10,7 @@
 
 var _             = require( "underscore" ),
     $             = require( "jquery" ),
+    jeolok        = require( "jeolok" ),
     BackBone      = require( "backbone" );
 
 BackBone.$    = require( "jquery" );
@@ -22,11 +23,14 @@ module.exports = BackBone.View.extend({
 
     constructor: function (oTerminalModel) {
         BackBone.View.apply( this, arguments );
+
         this.model = oTerminalModel;
 
         console.log( "TerminalListElementView:init()" );
 
-        _tpl = $("#tpl-result-list-elt").remove().text();
+        if ( !_tpl ) {
+            _tpl = $("#tpl-result-list-elt").remove().text();
+        }
     },
 
     events: {
@@ -39,12 +43,12 @@ module.exports = BackBone.View.extend({
             .html( _tpl )
             .find("a")
                 .find("img")
-                    .attr("src", "images/banks/" + oBank.icon + ".png")
-                    .attr("alt", oBank.name)
+                    .attr( "src", "banks/" + oBank.icon )
+                    .attr("alt", (oBank && oBank.name) ? oBank.name : "Inconnu")
                     .end()
                 .find("strong")
                     .css("color", "#" + oBank.color)
-                    .text(oBank.name)
+                    .text((oBank && oBank.name) ? oBank.name : "Inconnu")
                     .end()
                 .find("span")
                     .text( ( parseFloat( this.model.distance ) * 1000 ) + "m" );
@@ -53,6 +57,6 @@ module.exports = BackBone.View.extend({
 
     showTerminal: function (e) {
         e.preventDefault();
-        console.log( "TODO: showTerminal" );
+        window.app.router.navigate( "terminals/details/" + this.model.get( "id" ), {trigger: true} );
     }
 });
