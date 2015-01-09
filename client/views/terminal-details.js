@@ -26,6 +26,8 @@ module.exports = BackBone.View.extend({
 
         this.model = oTerminalModel;
 
+        console.log(this);
+
         console.log( "TerminalDetailsView:init()" );
 
         if ( !_tpl ) {
@@ -34,7 +36,8 @@ module.exports = BackBone.View.extend({
     },
 
     events: {
-        "click .problems a": "toggleEmptyState"
+        "click .problems a": "toggleEmptyState",
+        "click .back": "goToBack"
     },
 
     render: function () {
@@ -45,25 +48,33 @@ module.exports = BackBone.View.extend({
             "longitude": this.model.get( "longitude" )
         };
 
+        console.log(this.model.get('empty'));
+
         this.$el
             .html( _tpl )
             .attr( "class", "overlay" )
-            .find("h2")
+            .find("h2 span")
                 .css( "color", "#" + ( (oBank && oBank.color) ? oBank.color : "333" ) )
                 .text((oBank && oBank.name) ? oBank.name : "Inconnu")
                 .end()
-                    .find("h2 img")
-                        .attr( "src", oBank && oBank.icon ? "/images/banks/" + oBank.icon : "images/banks/unknown.png" )
-                        .attr( "alt", oBank && oBank.name ? oBank.name : "Inconnu" )
-                        .end()
-            .find( "span" )
+                .find("img")
+                    .attr( "src", (oBank && oBank.icon) ? "/banks/" + oBank.icon : "/banks/unknown.png" )
+                    .attr( "alt", oBank && oBank.name ? oBank.name : "Inconnu" )
+                    .end()
+            .find( "#distance" )
                 .text( ( jeyodistans( oTerminalPosition, window.app.currentPosition ) * 1000 ) + "m" )
+                .end()
             .find( "address" )
                 .text( this.model.get( "address" ) )
                 .end()
             .find( ".empty" )
-                .toggle(this.model.get("empty"))
+                .toggle( this.model.get( "empty" ) )
                 .end()
+            .find( ".problems" )
+                .toggle( this.model.get( "empty" ) )
+                .end()
+            .find( ".confirm_problem" )
+                .hide();
             ;
         return this;
     },
@@ -76,12 +87,17 @@ module.exports = BackBone.View.extend({
             "url": "/api/terminals/" + this.model.get( "id" ) + "/empty",
             "success": function() {
                 that.$el
-                    .find( ".empty" )
+                    .find( "empty" )
                         .show()
                         .end()
                     .find( ".problems" )
                         .hide();
             }
         } );
+    },
+
+    goToBack: function ( e ) {
+        e.preventDefault();
+        BackBone.history.navigate('', true);
     }
 });

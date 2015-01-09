@@ -52,8 +52,8 @@ module.exports = BackBone.View.extend({
         return this;
     },
 
-    showTerminal: function (e) {
+    showTerminal: function ( e ) {
         e.preventDefault();
-        window.app.router.navigate( "terminals/details/" + this.model.get( "id" ), {trigger: true} );
+        window.app.router.navigate( "terminals/details/" + this.model.get( "id" ), { trigger: true } );
     }
 });

@@ -47,7 +47,8 @@ module.exports = function (grunt) {
 			},
 			"styles": {
 				"files": {
-					"bin/css/styles.css": "src/styl/styles.styl"
+					"bin/css/styles.css": "src/styl/styles.styl",
+					"../static/css/styles.css": "src/styl/styles.styl"
 				}
 			}
 		},

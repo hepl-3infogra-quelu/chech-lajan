@@ -12,7 +12,7 @@
 			scrollWheel: false
 		};
 		gMap = new google.maps.Map( $map[ 0 ], oMapOptions );
-	}
+	};
 
 	var _newMarker = function(oPosition, sType, sAnimation) {
 		var sAnimation = (sAnimation)? sAnimation : 'DROP';
@@ -23,7 +23,7 @@
 			animation: google.maps.Animation[ sAnimation.toUpperCase() ],
 			icon: 'img/marker-' + sType + '.png'
 		});
-	}
+	};
 
 	var _getPositionSuccess = function(oPosition) {
 		var oPos = new google.maps.LatLng(oPosition.coords.latitude,

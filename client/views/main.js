@@ -53,5 +53,9 @@ module.exports = BackBone.View.extend({
 
     initDetails: function ( TerminalDetailsView ) {
         this.$el.find( "#main" ).append( TerminalDetailsView.$el );
+    },
+
+    initMap: function ( MapView ) {
+        MapView.render();
     }
 });

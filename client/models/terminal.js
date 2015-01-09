@@ -14,7 +14,7 @@ var _             = require( "underscore" ),
 
 module.exports = BackBone.Model.extend( {
 
-    urlRoot: "api/terminals",
+    urlRoot: "/api/terminals",
 
     parse: function (oResponse) {
         // TODO handle errors

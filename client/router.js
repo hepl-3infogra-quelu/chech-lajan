@@ -16,6 +16,7 @@ BackBone.$    = require( "jquery" );
 
 var MainView = require( "./views/main" );
 var HeaderView = require( "./views/header" );
+var MapView = require( "./views/map" );
 var TerminalsListView = require( "./views/terminals-list" );
 var TerminalDetailsView = require( "./views/terminal-details" );
 
@@ -25,14 +26,12 @@ var TerminalsCollection = require( "./collections/terminals" );
 var oPosition;
 
 module.exports = BackBone.Router.extend( {
-    views: {
-
-    },
+    views: { },
 
     routes: {
         "terminals/list": "showTerminalsList",
         "terminals/map": "showTerminalsMap",
-        "terminals/details/:id/": "showTerminalDetails",
+        "terminals/details/:id": "showTerminalDetails",
         "": "showTerminalsList"
     },
 
@@ -40,10 +39,10 @@ module.exports = BackBone.Router.extend( {
         // 1. define & init views
         ( this.views.main = new MainView() ).render();
         this.views.main.initHeader( ( this.views.header = new HeaderView() ).render() );
+        var that = this;
 
         // 2. get geopos
         jeolok.getCurrentPosition( {"enableHighAccuracy": true}, function (oError, oGivenPosition){
-            console.log(oGivenPosition);
             if (oError) {
                 console.log ("oups..");
                 oPosition = {
@@ -60,8 +59,9 @@ module.exports = BackBone.Router.extend( {
             BackBone.history.start( {
                 pushState: true
             } );
-        } );
 
+            that.views.main.initMap( that.views.map = new MapView(oPosition) );
+        } );
     },
 
     showTerminalsList: function () {
@@ -100,7 +100,7 @@ module.exports = BackBone.Router.extend( {
                     success: function () {
                         that.views.main.clearContent();
                         that.views.main.initDetails( that.views.details.render() );
-                        this.views.main.loading( false );
+                        that.views.main.loading( false );
                     }
                 } );
     }

@@ -71,7 +71,7 @@ var _             = require( "underscore" ),
 
 module.exports = BackBone.Model.extend( {
 
-    urlRoot: "api/terminals",
+    urlRoot: "/api/terminals",
 
     parse: function (oResponse) {
         // TODO handle errors
@@ -105,6 +105,7 @@ BackBone.$    = require( "jquery" );
 
 var MainView = require( "./views/main" );
 var HeaderView = require( "./views/header" );
+var MapView = require( "./views/map" );
 var TerminalsListView = require( "./views/terminals-list" );
 var TerminalDetailsView = require( "./views/terminal-details" );
 
@@ -114,14 +115,12 @@ var TerminalsCollection = require( "./collections/terminals" );
 var oPosition;
 
 module.exports = BackBone.Router.extend( {
-    views: {
-
-    },
+    views: { },
 
     routes: {
         "terminals/list": "showTerminalsList",
         "terminals/map": "showTerminalsMap",
-        "terminals/details/:id/": "showTerminalDetails",
+        "terminals/details/:id": "showTerminalDetails",
         "": "showTerminalsList"
     },
 
@@ -129,10 +128,10 @@ module.exports = BackBone.Router.extend( {
         // 1. define & init views
         ( this.views.main = new MainView() ).render();
         this.views.main.initHeader( ( this.views.header = new HeaderView() ).render() );
+        var that = this;
 
         // 2. get geopos
         jeolok.getCurrentPosition( {"enableHighAccuracy": true}, function (oError, oGivenPosition){
-            console.log(oGivenPosition);
             if (oError) {
                 console.log ("oups..");
                 oPosition = {
@@ -149,8 +148,9 @@ module.exports = BackBone.Router.extend( {
             BackBone.history.start( {
                 pushState: true
             } );
-        } );
 
+            that.views.main.initMap( that.views.map = new MapView(oPosition) );
+        } );
     },
 
     showTerminalsList: function () {
@@ -189,13 +189,13 @@ module.exports = BackBone.Router.extend( {
                     success: function () {
                         that.views.main.clearContent();
                         that.views.main.initDetails( that.views.details.render() );
-                        this.views.main.loading( false );
+                        that.views.main.loading( false );
                     }
                 } );
     }
 } );
 
-},{"./collections/terminals":2,"./models/terminal":3,"./views/header":5,"./views/main":6,"./views/terminal-details":7,"./views/terminals-list":9,"backbone":"backbone","jeolok":"jeolok","jquery":"jquery","underscore":"underscore"}],5:[function(require,module,exports){
+},{"./collections/terminals":2,"./models/terminal":3,"./views/header":5,"./views/main":6,"./views/map":7,"./views/terminal-details":8,"./views/terminals-list":10,"backbone":"backbone","jeolok":"jeolok","jquery":"jquery","underscore":"underscore"}],5:[function(require,module,exports){
 /* Chèch Lajan
 *
 * /views/header.js - backbone header view
@@ -314,10 +314,91 @@ module.exports = BackBone.View.extend({
 
     initDetails: function ( TerminalDetailsView ) {
         this.$el.find( "#main" ).append( TerminalDetailsView.$el );
+    },
+
+    initMap: function ( MapView ) {
+        MapView.render();
     }
 });
 
 },{"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],7:[function(require,module,exports){
+/* Chèch Lajan
+*
+* /views/map.js - backbone map view
+*
+* started @ 09/01/15
+*/
+
+
+"use strict";
+
+var _             = require( "underscore" ),
+    $             = require( "jquery" ),
+    BackBone      = require( "backbone" );
+
+BackBone.$    = require( "jquery" );
+
+var _tpl;
+
+module.exports = BackBone.View.extend({
+
+    el: "<div />",
+    gMap: null,
+    $map: null,
+
+    constructor: function (oPosition) {
+        BackBone.View.apply( this, arguments );
+
+        console.log( "MapView:init()" );
+
+        this.$map = $( '#map-canvas' );
+        this.initMap();
+
+        this.setPosition(oPosition);
+    },
+
+    events: { },
+
+    render: function () {
+        return this;
+    },
+
+    loading: function( bLoadingState ) {
+        this.$el.find( "#status" ).toggleClass( "loading", bLoadingState );
+    },
+
+    initMap: function () {
+        var oMapOptions = {
+            zoom: 15,
+            disableDefaultUI: true,
+            zoomControl: true,
+            scrollWheel: false
+        };
+        this.gMap = new google.maps.Map( this.$map[ 0 ], oMapOptions );
+    },
+
+    newMarker: function(oPosition, sType, sAnimation) {
+        var sAnimation = (sAnimation)? sAnimation : 'DROP';
+
+        new google.maps.Marker({
+            position: new google.maps.LatLng(oPosition.latitude, oPosition.longitude),
+            map: this.gMap,
+            animation: google.maps.Animation[ sAnimation.toUpperCase() ],
+            icon: 'img/marker-' + sType + '.png'
+        });
+    },
+
+    setPosition: function(oPosition) {
+        var oPos = new google.maps.LatLng(oPosition.latitude,
+                    oPosition.longitude);
+
+        this.newMarker(oPosition, 'me', 'bounce');
+
+        this.gMap.setCenter(oPos);
+    }
+});
+
+},{"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],8:[function(require,module,exports){
 /* Chèch Lajan
 *
 * /views/terminal-details.js - backbone terminals details view
@@ -346,6 +427,8 @@ module.exports = BackBone.View.extend({
 
         this.model = oTerminalModel;
 
+        console.log(this);
+
         console.log( "TerminalDetailsView:init()" );
 
         if ( !_tpl ) {
@@ -354,7 +437,8 @@ module.exports = BackBone.View.extend({
     },
 
     events: {
-        "click .problems a": "toggleEmptyState"
+        "click .problems a": "toggleEmptyState",
+        "click .back": "goToBack"
     },
 
     render: function () {
@@ -365,25 +449,33 @@ module.exports = BackBone.View.extend({
             "longitude": this.model.get( "longitude" )
         };
 
+        console.log(this.model.get('empty'));
+
         this.$el
             .html( _tpl )
             .attr( "class", "overlay" )
-            .find("h2")
+            .find("h2 span")
                 .css( "color", "#" + ( (oBank && oBank.color) ? oBank.color : "333" ) )
                 .text((oBank && oBank.name) ? oBank.name : "Inconnu")
                 .end()
-                    .find("h2 img")
-                        .attr( "src", oBank && oBank.icon ? "/images/banks/" + oBank.icon : "images/banks/unknown.png" )
-                        .attr( "alt", oBank && oBank.name ? oBank.name : "Inconnu" )
-                        .end()
-            .find( "span" )
+                .find("img")
+                    .attr( "src", (oBank && oBank.icon) ? "/banks/" + oBank.icon : "/banks/unknown.png" )
+                    .attr( "alt", oBank && oBank.name ? oBank.name : "Inconnu" )
+                    .end()
+            .find( "#distance" )
                 .text( ( jeyodistans( oTerminalPosition, window.app.currentPosition ) * 1000 ) + "m" )
+                .end()
             .find( "address" )
                 .text( this.model.get( "address" ) )
                 .end()
             .find( ".empty" )
-                .toggle(this.model.get("empty"))
+                .toggle( this.model.get( "empty" ) )
                 .end()
+            .find( ".problems" )
+                .toggle( this.model.get( "empty" ) )
+                .end()
+            .find( ".confirm_problem" )
+                .hide();
             ;
         return this;
     },
@@ -396,17 +488,22 @@ module.exports = BackBone.View.extend({
             "url": "/api/terminals/" + this.model.get( "id" ) + "/empty",
             "success": function() {
                 that.$el
-                    .find( ".empty" )
+                    .find( "empty" )
                         .show()
                         .end()
                     .find( ".problems" )
                         .hide();
             }
         } );
+    },
+
+    goToBack: function ( e ) {
+        e.preventDefault();
+        BackBone.history.navigate('', true);
     }
 });
 
-},{"backbone":"backbone","jeyo-distans":"jeyo-distans","jquery":"jquery","underscore":"underscore"}],8:[function(require,module,exports){
+},{"backbone":"backbone","jeyo-distans":"jeyo-distans","jquery":"jquery","underscore":"underscore"}],9:[function(require,module,exports){
 /* Chèch Lajan
 *
 * /views/terminal-list-element.js - backbone terminals element view
@@ -461,13 +558,13 @@ module.exports = BackBone.View.extend({
         return this;
     },
 
-    showTerminal: function (e) {
+    showTerminal: function ( e ) {
         e.preventDefault();
-        window.app.router.navigate( "terminals/details/" + this.model.get( "id" ), {trigger: true} );
+        window.app.router.navigate( "terminals/details/" + this.model.get( "id" ), { trigger: true } );
     }
 });
 
-},{"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],9:[function(require,module,exports){
+},{"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],10:[function(require,module,exports){
 /* Chèch Lajan
 *
 * /views/terminal-list.js - backbone terminals list view
@@ -503,7 +600,9 @@ module.exports = BackBone.View.extend({
         }
     },
 
-    events: {},
+    events: {
+        "click .back": "goToMap"
+    },
     render: function () {
         this.$el
             .attr( "class", "overlay" )
@@ -516,7 +615,11 @@ module.exports = BackBone.View.extend({
         } );
 
         return this;
+    },
+    goToMap: function ( e ) {
+        e.preventDefault();
+        BackBone.history.navigate('terminals/map', true);
     }
 });
 
-},{"./terminals-list-element":8,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}]},{},[1]);
+},{"./terminals-list-element":9,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}]},{},[1]);

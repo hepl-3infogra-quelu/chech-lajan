@@ -52,19 +52,23 @@
 
     <script type="text/template" id="tpl-details">
         <!-- Template for detail result -->
-        <div class="container small"><a href="list.html" class="back">Retour</a>
+        <div class="container small">
+            <a href="" class="back">Retour</a>
             <div class="info">
                 <h2>
                     <img src="" alt="" />
+                    <span></span>
                 </h2>
                 <address></address>
-                <div class="empty"></div>
+                <span id="distance"></span>
+                <a href="#" id="refresh-me">
+                    <span>Recharger ma positions</span>
+                </a>
+                <div class="empty">
+                    <p>Vide ou en panne !</p>
+                </div>
                 <div class="problems">
                     <a href="#" id="empty_terminal">Distributeur vide ou en panne</a>
-                    <a href="#" id="no_terminal">Pas de distributeur ici</a>
-                    <a href="#" id="wrong_place">Mauvaise localisation sur la carte</a>
-                    <a href="#" id="wrong_bank">Mauvaise banque</a>
-                    <a href="#" id="duplicate_terminal">Distributeur en double</a>
                 </div>
                 <div class="confirm_problem">
                     <form action="javascript:void(0);">
@@ -79,8 +83,6 @@
     </script>
 
     <script src="js/libs.min.js"></script>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBNV1rxti4vR6khDSlCBIOTj_Pvc_xF5AI"></script>
-    <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script>
         window.app = {
             "id": "chech-lajan",
@@ -90,7 +92,7 @@
         }
     </script>
     <script type="text/javascript" src="js/app.min.js"></script>
-    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBNV1rxti4vR6khDSlCBIOTj_Pvc_xF5AI"></script>
 
 </body>
 </html>

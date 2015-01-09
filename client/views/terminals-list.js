@@ -33,7 +33,9 @@ module.exports = BackBone.View.extend({
         }
     },
 
-    events: {},
+    events: {
+        "click .back": "goToMap"
+    },
     render: function () {
         this.$el
             .attr( "class", "overlay" )
@@ -46,5 +48,9 @@ module.exports = BackBone.View.extend({
         } );
 
         return this;
+    },
+    goToMap: function ( e ) {
+        e.preventDefault();
+        BackBone.history.navigate('terminals/map', true);
     }
 });

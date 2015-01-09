@@ -102,7 +102,7 @@ var details = function( oRequest, oResponse ) {
                 return api.error( oRequest, oResponse, oError.type, oError );
             }
             oTerminal.empty = true;
-            api.send( oRequest, oRespose, oTerminal.clean() );
+            api.send( oRequest, oResponse, oTerminal.clean() );
         });
 };
 
