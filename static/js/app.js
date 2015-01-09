@@ -427,8 +427,6 @@ module.exports = BackBone.View.extend({
 
         this.model = oTerminalModel;
 
-        console.log(this);
-
         console.log( "TerminalDetailsView:init()" );
 
         if ( !_tpl ) {
@@ -543,10 +541,12 @@ module.exports = BackBone.View.extend({
     render: function () {
         var oBank = this.model.get("bank");
 
+        var status = (this.model.get('empty')) ? 'empty' : 'money';
+
         window.app.map.newMarker({
             latitude: this.model.get('latitude'),
             longitude: this.model.get('longitude')
-        }, 'money');
+        }, status);
 
         this.$el
             .html( _tpl )
