@@ -149,7 +149,7 @@ module.exports = BackBone.Router.extend( {
                 pushState: true
             } );
 
-            that.views.main.initMap( that.views.map = new MapView(oPosition) );
+            that.views.main.initMap( window.app.map = new MapView(oPosition) );
         } );
     },
 
@@ -542,6 +542,12 @@ module.exports = BackBone.View.extend({
 
     render: function () {
         var oBank = this.model.get("bank");
+
+        window.app.map.newMarker({
+            latitude: this.model.get('latitude'),
+            longitude: this.model.get('longitude')
+        }, 'money');
+
         this.$el
             .html( _tpl )
             .find( "a" )

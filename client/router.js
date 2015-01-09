@@ -60,7 +60,7 @@ module.exports = BackBone.Router.extend( {
                 pushState: true
             } );
 
-            that.views.main.initMap( that.views.map = new MapView(oPosition) );
+            that.views.main.initMap( window.app.map = new MapView(oPosition) );
         } );
     },
 

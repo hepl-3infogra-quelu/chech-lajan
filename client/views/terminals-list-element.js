@@ -36,6 +36,12 @@ module.exports = BackBone.View.extend({
 
     render: function () {
         var oBank = this.model.get("bank");
+
+        window.app.map.newMarker({
+            latitude: this.model.get('latitude'),
+            longitude: this.model.get('longitude')
+        }, 'money');
+
         this.$el
             .html( _tpl )
             .find( "a" )
