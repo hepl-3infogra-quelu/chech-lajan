@@ -7,10 +7,8 @@
 
 "use strict";
 
-var _           = require( "underscore" ),
-    $           = require( "jquery" ),
+var $           = require( "jquery" ),
     FastClick   = require( "fastclick" ),
-    jeolok      = require( "jeolok" ),
     Router      = require( "./router" );
 
 window.app.now = new Date();

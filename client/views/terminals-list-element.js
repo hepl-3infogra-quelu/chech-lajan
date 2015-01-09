@@ -10,7 +10,6 @@
 
 var _             = require( "underscore" ),
     $             = require( "jquery" ),
-    jeolok        = require( "jeolok" ),
     BackBone      = require( "backbone" );
 
 BackBone.$    = require( "jquery" );
@@ -26,8 +25,6 @@ module.exports = BackBone.View.extend({
 
         this.model = oTerminalModel;
 
-        console.log( "TerminalListElementView:init()" );
-
         if ( !_tpl ) {
             _tpl = $("#tpl-result-list-elt").remove().text();
         }
@@ -41,17 +38,17 @@ module.exports = BackBone.View.extend({
         var oBank = this.model.get("bank");
         this.$el
             .html( _tpl )
-            .find("a")
-                .find("img")
-                    .attr( "src", "banks/" + oBank.icon )
-                    .attr("alt", (oBank && oBank.name) ? oBank.name : "Inconnu")
+            .find( "a" )
+                .find( "img" )
+                    .attr( "src", oBank && oBank.icon ? "banks/" + oBank.icon : "banks/unknown.png" )
+                    .attr( "alt", oBank && oBank.name ? oBank.name : "Inconnu" )
                     .end()
-                .find("strong")
-                    .css("color", "#" + oBank.color)
-                    .text((oBank && oBank.name) ? oBank.name : "Inconnu")
+                .find( "strong" )
+                    .css( "color", "#" + ( oBank && oBank.color ? oBank.color : "333" ) )
+                    .text( oBank && oBank.name ? oBank.name : "Inconnu" )
                     .end()
-                .find("span")
-                    .text( ( parseFloat( this.model.distance ) * 1000 ) + "m" );
+                .find( "span" )
+                    .text( ( parseFloat( this.model.get( "distance" ) ) * 1000 ) + "m" );
         return this;
     },
 

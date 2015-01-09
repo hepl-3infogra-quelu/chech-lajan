@@ -9,7 +9,6 @@
 "use strict";
 
 var _             = require( "underscore" ),
-    $             = require( "jquery" ),
     jeolok        = require( "jeolok" ),
     BackBone      = require( "backbone" );
 
@@ -33,7 +32,7 @@ module.exports = BackBone.Router.extend( {
     routes: {
         "terminals/list": "showTerminalsList",
         "terminals/map": "showTerminalsMap",
-        "terminals/details/:id": "showTerminalDetails",
+        "terminals/details/:id/": "showTerminalDetails",
         "": "showTerminalsList"
     },
 
@@ -44,23 +43,25 @@ module.exports = BackBone.Router.extend( {
 
         // 2. get geopos
         jeolok.getCurrentPosition( {"enableHighAccuracy": true}, function (oError, oGivenPosition){
-            // console.log(oGivenPosition);
+            console.log(oGivenPosition);
             if (oError) {
                 console.log ("oups..");
                 oPosition = {
                     latitude: 50.84274,
                     longitude: 4.35154
-                }
+                };
             }
             else {
                 oPosition = oGivenPosition.coords;
             }
+            window.app.currentPosition = oPosition;
+
+            // 3. launch router
+            BackBone.history.start( {
+                pushState: true
+            } );
         } );
 
-        // 3. launch router
-        BackBone.history.start( {
-            pushState: true
-        } );
     },
 
     showTerminalsList: function () {
@@ -68,21 +69,18 @@ module.exports = BackBone.Router.extend( {
 
         var that = this;
         this.views.main.loading(true);
-        var oTerminalsCollection = new TerminalsCollection( oPosition );
+        var oTerminalsCollection = new TerminalsCollection();
         ( this.views.list = new TerminalsListView( oTerminalsCollection ) )
             .collection
                 .fetch( {
                     data: {
-                        latitude: 50.84274,
-                        longitude: 4.35154
-                        // latitude: oPosition.latitude,
-                        // longitude: oPosition.longitude
+                        latitude: oPosition.latitude,
+                        longitude: oPosition.longitude
                     },
                     success: function () {
-                        console.log( "collection fetch done" )
                         that.views.main.clearContent();
                         that.views.main.initList( that.views.list.render() );
-                        that.views.main.loading( false );
+                        that.views.main.loading( false, oTerminalsCollection.length + " résultats" );
                     }
                 } );
     },
@@ -102,7 +100,6 @@ module.exports = BackBone.Router.extend( {
                     success: function () {
                         that.views.main.clearContent();
                         that.views.main.initDetails( that.views.details.render() );
-                        console.log( "Model successfully fetched" )
                         this.views.main.loading( false );
                     }
                 } );

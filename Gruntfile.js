@@ -53,7 +53,7 @@ module.exports = function( grunt ) {
                 "files": [ "client/**/*.js" ],
                 "options": {
                     "spawn": false,
-                    "livereload": true
+                    // "livereload": true
                 },
                 "tasks": [
                 "browserify:app",

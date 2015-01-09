@@ -27,19 +27,20 @@ module.exports = BackBone.View.extend({
         // TODO : define private accessors to subviews
     },
 
-    loading: function ( bLoadingState ) {
-        // TODO : visual Feedback
-        if (bLoadingState) {
-            console.log( "Chargement..." )
-        }
-        else {
-            console.log( "Fini !" );
+    loading: function ( bLoadingState, sNewStatus ) {
+        if( bLoadingState ) {
+            this._status = window.app.router.views.header.getStatus();
+            window.app.router.views.header.loading( true );
+            window.app.router.views.header.setStatus( sNewStatus || "chargement..." );
+        } else {
+            window.app.router.views.header.loading( false );
+            window.app.router.views.header.setStatus( sNewStatus );
         }
     },
 
     clearContent: function () {
         // Cette méthode sert à vider les vues avant d'en rajouter de nouvelles
-        this.$el.find("#main div").remove();
+        this.$el.find("#main div:not(#status)" ).remove();
     },
 
     initHeader: function ( HeaderView ) {

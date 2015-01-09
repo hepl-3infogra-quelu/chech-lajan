@@ -12,8 +12,6 @@ var _             = require( "underscore" ),
     $             = require( "jquery" ),
     BackBone      = require( "backbone" );
 
-BackBone.$    = require( "jquery" );
-
 module.exports = BackBone.Model.extend( {
 
     urlRoot: "api/terminals",

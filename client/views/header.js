@@ -25,16 +25,37 @@ module.exports = BackBone.View.extend({
 
         console.log( "HeaderView:init()" );
 
-        _tpl = $("#tpl-header").remove().text();
+        if( !_tpl ) {
+            _tpl = $( "#tpl-header" ).remove().text();
+        }
     },
 
     events: {
-        "click #reload": "reloadButtonClicked",
-        "click #list": "listButtonClicked",
+        "click #reload": "reloadButtonClicked"
     },
+
     render: function () {
         this.$el.html( _tpl );
 
+        this.$status = this.$el.find( "#status" );
+
         return this;
+    },
+
+    loading: function( bLoadingState ) {
+        this.$el.find( "#status" ).toggleClass( "loading", bLoadingState );
+    },
+
+    getStatus: function() {
+        return this.$status.text();
+    },
+
+    setStatus: function( sText ) {
+        this.$status.text( sText );
+    },
+
+    reloadButtonClicked: function( e ) {
+        e.preventDefault();
+        console.log( "reloadButtonClicked" );
     }
 });

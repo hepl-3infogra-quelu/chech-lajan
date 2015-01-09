@@ -39,10 +39,10 @@ module.exports = BackBone.View.extend({
             .attr( "class", "overlay" )
             .html( _tpl );
 
-        var list = this.$el.find( "ul" );
-        console.log ("list");
+        var $list = this.$el.find( "ul" );
+
         this.collection.each( function ( oTerminalModel ) {
-            list.append( ( new TerminalElementView( oTerminalModel ) ).render().$el );
+            ( new TerminalElementView( oTerminalModel ) ).render().$el.appendTo( $list );
         } );
 
         return this;

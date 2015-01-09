@@ -33,7 +33,7 @@ var list = function( oRequest, oResponse ) {
         return api.error( oRequest, oResponse, "TERMINALS_LIST_NO_POSITION_GIVEN", oRequest.query );
     };
     if ( isNaN( iGivenRadius ) || iGivenRadius > iMaxSearchRadius ) {
-        iGivenRadius = 5;
+        iGivenRadius = 3;
     }
     iSearchRadiusSize = iArcKilometer * iGivenRadius;
 

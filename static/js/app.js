@@ -8,10 +8,8 @@
 
 "use strict";
 
-var _           = require( "underscore" ),
-    $           = require( "jquery" ),
+var $           = require( "jquery" ),
     FastClick   = require( "fastclick" ),
-    jeolok      = require( "jeolok" ),
     Router      = require( "./router" );
 
 window.app.now = new Date();
@@ -27,7 +25,7 @@ $( function() {
 
 } );
 
-},{"./router":4,"fastclick":"fastclick","jeolok":"jeolok","jquery":"jquery","underscore":"underscore"}],2:[function(require,module,exports){
+},{"./router":4,"fastclick":"fastclick","jquery":"jquery"}],2:[function(require,module,exports){
 /* Chèch Lajan
 *
 * /collections/terminals.js - backbone collections for terminal
@@ -71,8 +69,6 @@ var _             = require( "underscore" ),
     $             = require( "jquery" ),
     BackBone      = require( "backbone" );
 
-BackBone.$    = require( "jquery" );
-
 module.exports = BackBone.Model.extend( {
 
     urlRoot: "api/terminals",
@@ -102,7 +98,6 @@ module.exports = BackBone.Model.extend( {
 "use strict";
 
 var _             = require( "underscore" ),
-    $             = require( "jquery" ),
     jeolok        = require( "jeolok" ),
     BackBone      = require( "backbone" );
 
@@ -126,7 +121,7 @@ module.exports = BackBone.Router.extend( {
     routes: {
         "terminals/list": "showTerminalsList",
         "terminals/map": "showTerminalsMap",
-        "terminals/details/:id": "showTerminalDetails",
+        "terminals/details/:id/": "showTerminalDetails",
         "": "showTerminalsList"
     },
 
@@ -137,23 +132,25 @@ module.exports = BackBone.Router.extend( {
 
         // 2. get geopos
         jeolok.getCurrentPosition( {"enableHighAccuracy": true}, function (oError, oGivenPosition){
-            // console.log(oGivenPosition);
+            console.log(oGivenPosition);
             if (oError) {
                 console.log ("oups..");
                 oPosition = {
                     latitude: 50.84274,
                     longitude: 4.35154
-                }
+                };
             }
             else {
                 oPosition = oGivenPosition.coords;
             }
+            window.app.currentPosition = oPosition;
+
+            // 3. launch router
+            BackBone.history.start( {
+                pushState: true
+            } );
         } );
 
-        // 3. launch router
-        BackBone.history.start( {
-            pushState: true
-        } );
     },
 
     showTerminalsList: function () {
@@ -161,21 +158,18 @@ module.exports = BackBone.Router.extend( {
 
         var that = this;
         this.views.main.loading(true);
-        var oTerminalsCollection = new TerminalsCollection( oPosition );
+        var oTerminalsCollection = new TerminalsCollection();
         ( this.views.list = new TerminalsListView( oTerminalsCollection ) )
             .collection
                 .fetch( {
                     data: {
-                        latitude: 50.84274,
-                        longitude: 4.35154
-                        // latitude: oPosition.latitude,
-                        // longitude: oPosition.longitude
+                        latitude: oPosition.latitude,
+                        longitude: oPosition.longitude
                     },
                     success: function () {
-                        console.log( "collection fetch done" )
                         that.views.main.clearContent();
                         that.views.main.initList( that.views.list.render() );
-                        that.views.main.loading( false );
+                        that.views.main.loading( false, oTerminalsCollection.length + " résultats" );
                     }
                 } );
     },
@@ -195,7 +189,6 @@ module.exports = BackBone.Router.extend( {
                     success: function () {
                         that.views.main.clearContent();
                         that.views.main.initDetails( that.views.details.render() );
-                        console.log( "Model successfully fetched" )
                         this.views.main.loading( false );
                     }
                 } );
@@ -230,17 +223,38 @@ module.exports = BackBone.View.extend({
 
         console.log( "HeaderView:init()" );
 
-        _tpl = $("#tpl-header").remove().text();
+        if( !_tpl ) {
+            _tpl = $( "#tpl-header" ).remove().text();
+        }
     },
 
     events: {
-        "click #reload": "reloadButtonClicked",
-        "click #list": "listButtonClicked",
+        "click #reload": "reloadButtonClicked"
     },
+
     render: function () {
         this.$el.html( _tpl );
 
+        this.$status = this.$el.find( "#status" );
+
         return this;
+    },
+
+    loading: function( bLoadingState ) {
+        this.$el.find( "#status" ).toggleClass( "loading", bLoadingState );
+    },
+
+    getStatus: function() {
+        return this.$status.text();
+    },
+
+    setStatus: function( sText ) {
+        this.$status.text( sText );
+    },
+
+    reloadButtonClicked: function( e ) {
+        e.preventDefault();
+        console.log( "reloadButtonClicked" );
     }
 });
 
@@ -274,19 +288,20 @@ module.exports = BackBone.View.extend({
         // TODO : define private accessors to subviews
     },
 
-    loading: function ( bLoadingState ) {
-        // TODO : visual Feedback
-        if (bLoadingState) {
-            console.log( "Chargement..." )
-        }
-        else {
-            console.log( "Fini !" );
+    loading: function ( bLoadingState, sNewStatus ) {
+        if( bLoadingState ) {
+            this._status = window.app.router.views.header.getStatus();
+            window.app.router.views.header.loading( true );
+            window.app.router.views.header.setStatus( sNewStatus || "chargement..." );
+        } else {
+            window.app.router.views.header.loading( false );
+            window.app.router.views.header.setStatus( sNewStatus );
         }
     },
 
     clearContent: function () {
         // Cette méthode sert à vider les vues avant d'en rajouter de nouvelles
-        this.$el.find("#main div").remove();
+        this.$el.find("#main div:not(#status)" ).remove();
     },
 
     initHeader: function ( HeaderView ) {
@@ -343,21 +358,29 @@ module.exports = BackBone.View.extend({
     },
 
     render: function () {
-        var oBank = this.model;
+        var oBank = this.model.get( "bank" );
+
+        var oTerminalPosition = {
+            "latitude": this.model.get( "latitude" ),
+            "longitude": this.model.get( "longitude" )
+        };
 
         this.$el
-            .attr( "class", "overlay" )
             .html( _tpl )
+            .attr( "class", "overlay" )
             .find("h2")
-            .css("color", "#" + oBank.color)
-            .text((oBank && oBank.name) ? oBank.name : "Inconnu")
-            .end()
-                .find("h2 img")
-                    .attr( "src", "banks/" + oBank.icon )
-                    .attr( "alt", (oBank && oBank.name) ? oBank.name : "Inconnu" )
-                    .end()
+                .css( "color", "#" + ( (oBank && oBank.color) ? oBank.color : "333" ) )
+                .text((oBank && oBank.name) ? oBank.name : "Inconnu")
+                .end()
+                    .find("h2 img")
+                        .attr( "src", oBank && oBank.icon ? "/images/banks/" + oBank.icon : "images/banks/unknown.png" )
+                        .attr( "alt", oBank && oBank.name ? oBank.name : "Inconnu" )
+                        .end()
             .find( "span" )
-                .text( ( parseFloat( this.model.distance ) * 1000 ) + "m" )
+                .text( ( jeyodistans( oTerminalPosition, window.app.currentPosition ) * 1000 ) + "m" )
+            .find( "address" )
+                .text( this.model.get( "address" ) )
+                .end()
             .find( ".empty" )
                 .toggle(this.model.get("empty"))
                 .end()
@@ -365,14 +388,21 @@ module.exports = BackBone.View.extend({
         return this;
     },
 
-    toggleEmptyState: function () {
-        a.preventDefault();
-        this.model.set( "empty", false);
-        this.model.save(null, {
-            success: function () {
-
+    toggleEmptyState: function ( e ) {
+        e.preventDefault();
+        var that = this;
+        this.model.set( "empty", false );
+        this.model.save( null, {
+            "url": "/api/terminals/" + this.model.get( "id" ) + "/empty",
+            "success": function() {
+                that.$el
+                    .find( ".empty" )
+                        .show()
+                        .end()
+                    .find( ".problems" )
+                        .hide();
             }
-        })
+        } );
     }
 });
 
@@ -389,7 +419,6 @@ module.exports = BackBone.View.extend({
 
 var _             = require( "underscore" ),
     $             = require( "jquery" ),
-    jeolok        = require( "jeolok" ),
     BackBone      = require( "backbone" );
 
 BackBone.$    = require( "jquery" );
@@ -405,8 +434,6 @@ module.exports = BackBone.View.extend({
 
         this.model = oTerminalModel;
 
-        console.log( "TerminalListElementView:init()" );
-
         if ( !_tpl ) {
             _tpl = $("#tpl-result-list-elt").remove().text();
         }
@@ -420,17 +447,17 @@ module.exports = BackBone.View.extend({
         var oBank = this.model.get("bank");
         this.$el
             .html( _tpl )
-            .find("a")
-                .find("img")
-                    .attr( "src", "banks/" + oBank.icon )
-                    .attr("alt", (oBank && oBank.name) ? oBank.name : "Inconnu")
+            .find( "a" )
+                .find( "img" )
+                    .attr( "src", oBank && oBank.icon ? "banks/" + oBank.icon : "banks/unknown.png" )
+                    .attr( "alt", oBank && oBank.name ? oBank.name : "Inconnu" )
                     .end()
-                .find("strong")
-                    .css("color", "#" + oBank.color)
-                    .text((oBank && oBank.name) ? oBank.name : "Inconnu")
+                .find( "strong" )
+                    .css( "color", "#" + ( oBank && oBank.color ? oBank.color : "333" ) )
+                    .text( oBank && oBank.name ? oBank.name : "Inconnu" )
                     .end()
-                .find("span")
-                    .text( ( parseFloat( this.model.distance ) * 1000 ) + "m" );
+                .find( "span" )
+                    .text( ( parseFloat( this.model.get( "distance" ) ) * 1000 ) + "m" );
         return this;
     },
 
@@ -440,7 +467,7 @@ module.exports = BackBone.View.extend({
     }
 });
 
-},{"backbone":"backbone","jeolok":"jeolok","jquery":"jquery","underscore":"underscore"}],9:[function(require,module,exports){
+},{"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],9:[function(require,module,exports){
 /* Chèch Lajan
 *
 * /views/terminal-list.js - backbone terminals list view
@@ -482,10 +509,10 @@ module.exports = BackBone.View.extend({
             .attr( "class", "overlay" )
             .html( _tpl );
 
-        var list = this.$el.find( "ul" );
-        console.log ("list");
+        var $list = this.$el.find( "ul" );
+
         this.collection.each( function ( oTerminalModel ) {
-            list.append( ( new TerminalElementView( oTerminalModel ) ).render().$el );
+            ( new TerminalElementView( oTerminalModel ) ).render().$el.appendTo( $list );
         } );
 
         return this;
