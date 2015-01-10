@@ -356,6 +356,7 @@ module.exports = BackBone.View.extend({
     gMap: null,
     $map: null,
     markers: [],
+    positionMarker: null,
 
     constructor: function (oPosition) {
         BackBone.View.apply( this, arguments );
@@ -408,8 +409,21 @@ module.exports = BackBone.View.extend({
     },
 
     setPosition: function(oPosition) {
+        if (this.positionMarker) {
+            this.positionMarker.setMap(null);
+            this.positionMarker = null;
+        }
+        this.positionMarker = this.newMarker( oPosition, 'me', 'bounce', true );
+    },
 
-        return this.newMarker( oPosition, 'me', 'bounce', true );
+    refresh: function (oPosition) {
+        var oPos = new google.maps.LatLng( oPosition.latitude, oPosition.longitude );
+
+        google.maps.event.trigger(this.gMap, 'resize');
+        this.setPosition(oPosition);
+        this.gMap.setCenter(oPos);
+
+        console.log('refresh');
     }
 });
 
@@ -427,6 +441,7 @@ module.exports = BackBone.View.extend({
 var _             = require( "underscore" ),
     $             = require( "jquery" ),
     BackBone      = require( "backbone" ),
+    jeolok        = require( "jeolok" ),
     jeyodistans   = require( "jeyo-distans" );
 
 BackBone.$    = require( "jquery" );
@@ -451,10 +466,16 @@ module.exports = BackBone.View.extend({
 
     events: {
         "click .problems a": "toggleEmptyState",
-        "click .back": "goToBack"
+        "click .back": "goToBack",
+        "click #refresh-me": "refreshPosition"
     },
 
-    render: function () {
+    render: function (bUpdateMarker) {
+        // Permet d'éviter une "empilation" de marqueur lors du refresh de position
+        if (bUpdateMarker == undefined) {
+            bUpdateMarker = true;
+        }
+
         var oBank = this.model.get( "bank" );
 
         var oTerminalPosition = {
@@ -464,12 +485,14 @@ module.exports = BackBone.View.extend({
 
         // Création du marqueur
 
-        var status = (this.model.get('empty')) ? 'empty' : 'money';
+        if (bUpdateMarker) {
+            var status = (this.model.get('empty')) ? 'empty' : 'money';
 
-        window.app.map.markers.push(window.app.map.newMarker({
-            latitude: oTerminalPosition.latitude,
-            longitude: oTerminalPosition.longitude
-        }, status, 'DROP', true));
+            window.app.map.markers.push(window.app.map.newMarker({
+                latitude: oTerminalPosition.latitude,
+                longitude: oTerminalPosition.longitude
+            }, status, 'DROP', true));
+        }
 
         this.$el
             .html( _tpl )
@@ -496,7 +519,6 @@ module.exports = BackBone.View.extend({
                 .end()
             .find( ".confirm_problem" )
                 .hide();
-            ;
         return this;
     },
 
@@ -520,10 +542,39 @@ module.exports = BackBone.View.extend({
     goToBack: function ( e ) {
         e.preventDefault();
         BackBone.history.navigate('', true);
+    },
+
+    refreshPosition: function ( e ) {
+        e.preventDefault();
+        var that = this;
+
+        // On récupère une nouvelle position
+        var oPosition;
+        jeolok.getCurrentPosition( {"enableHighAccuracy": true}, function (oError, oGivenPosition){
+            if (oError) {
+                console.log ("oups..");
+                oPosition = {
+                    latitude: 50.84274,
+                    longitude: 4.35154
+                };
+            }
+            else {
+                oPosition = oGivenPosition.coords;
+            }
+
+            // On met à jour la nouvelle position actuelle
+            window.app.currentPosition = oPosition;
+
+            // On raffraichit et recentre la map
+            window.app.map.refresh(oPosition);
+
+            // On raffraichit la distance du terminal
+            that.render(false);
+        } );
     }
 });
 
-},{"backbone":"backbone","jeyo-distans":"jeyo-distans","jquery":"jquery","underscore":"underscore"}],9:[function(require,module,exports){
+},{"backbone":"backbone","jeolok":"jeolok","jeyo-distans":"jeyo-distans","jquery":"jquery","underscore":"underscore"}],9:[function(require,module,exports){
 /* Chèch Lajan
 *
 * /views/terminal-list-element.js - backbone terminals element view
@@ -536,7 +587,8 @@ module.exports = BackBone.View.extend({
 
 var _             = require( "underscore" ),
     $             = require( "jquery" ),
-    BackBone      = require( "backbone" );
+    BackBone      = require( "backbone" ),
+    jeyodistans   = require( "jeyo-distans" );
 
 BackBone.$    = require( "jquery" );
 
@@ -563,6 +615,11 @@ module.exports = BackBone.View.extend({
     render: function () {
         var oBank = this.model.get("bank");
 
+        var oTerminalPosition = {
+            "latitude": this.model.get( "latitude" ),
+            "longitude": this.model.get( "longitude" )
+        };
+
         // Création des marqueurs
 
         var status = (this.model.get('empty')) ? 'empty' : 'money';
@@ -584,7 +641,7 @@ module.exports = BackBone.View.extend({
                     .text( oBank && oBank.name ? oBank.name : "Inconnu" )
                     .end()
                 .find( "span" )
-                    .text( ( parseFloat( this.model.get( "distance" ) ) * 1000 ) + "m" );
+                    .text( ( jeyodistans( oTerminalPosition, window.app.currentPosition ) * 1000 ) + "m" );
         return this;
     },
 
@@ -594,7 +651,7 @@ module.exports = BackBone.View.extend({
     }
 });
 
-},{"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],10:[function(require,module,exports){
+},{"backbone":"backbone","jeyo-distans":"jeyo-distans","jquery":"jquery","underscore":"underscore"}],10:[function(require,module,exports){
 /* Chèch Lajan
 *
 * /views/terminal-list.js - backbone terminals list view

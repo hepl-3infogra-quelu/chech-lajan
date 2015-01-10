@@ -10,7 +10,8 @@
 
 var _             = require( "underscore" ),
     $             = require( "jquery" ),
-    BackBone      = require( "backbone" );
+    BackBone      = require( "backbone" ),
+    jeyodistans   = require( "jeyo-distans" );
 
 BackBone.$    = require( "jquery" );
 
@@ -37,6 +38,11 @@ module.exports = BackBone.View.extend({
     render: function () {
         var oBank = this.model.get("bank");
 
+        var oTerminalPosition = {
+            "latitude": this.model.get( "latitude" ),
+            "longitude": this.model.get( "longitude" )
+        };
+
         // Création des marqueurs
 
         var status = (this.model.get('empty')) ? 'empty' : 'money';
@@ -58,7 +64,7 @@ module.exports = BackBone.View.extend({
                     .text( oBank && oBank.name ? oBank.name : "Inconnu" )
                     .end()
                 .find( "span" )
-                    .text( ( parseFloat( this.model.get( "distance" ) ) * 1000 ) + "m" );
+                    .text( ( jeyodistans( oTerminalPosition, window.app.currentPosition ) * 1000 ) + "m" );
         return this;
     },
 

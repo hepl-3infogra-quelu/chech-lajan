@@ -22,6 +22,7 @@ module.exports = BackBone.View.extend({
     gMap: null,
     $map: null,
     markers: [],
+    positionMarker: null,
 
     constructor: function (oPosition) {
         BackBone.View.apply( this, arguments );
@@ -74,7 +75,20 @@ module.exports = BackBone.View.extend({
     },
 
     setPosition: function(oPosition) {
+        if (this.positionMarker) {
+            this.positionMarker.setMap(null);
+            this.positionMarker = null;
+        }
+        this.positionMarker = this.newMarker( oPosition, 'me', 'bounce', true );
+    },
 
-        return this.newMarker( oPosition, 'me', 'bounce', true );
+    refresh: function (oPosition) {
+        var oPos = new google.maps.LatLng( oPosition.latitude, oPosition.longitude );
+
+        google.maps.event.trigger(this.gMap, 'resize');
+        this.setPosition(oPosition);
+        this.gMap.setCenter(oPos);
+
+        console.log('refresh');
     }
 });

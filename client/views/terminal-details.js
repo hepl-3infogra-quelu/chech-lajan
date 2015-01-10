@@ -11,6 +11,7 @@
 var _             = require( "underscore" ),
     $             = require( "jquery" ),
     BackBone      = require( "backbone" ),
+    jeolok        = require( "jeolok" ),
     jeyodistans   = require( "jeyo-distans" );
 
 BackBone.$    = require( "jquery" );
@@ -35,10 +36,16 @@ module.exports = BackBone.View.extend({
 
     events: {
         "click .problems a": "toggleEmptyState",
-        "click .back": "goToBack"
+        "click .back": "goToBack",
+        "click #refresh-me": "refreshPosition"
     },
 
-    render: function () {
+    render: function (bUpdateMarker) {
+        // Permet d'éviter une "empilation" de marqueur lors du refresh de position
+        if (bUpdateMarker == undefined) {
+            bUpdateMarker = true;
+        }
+
         var oBank = this.model.get( "bank" );
 
         var oTerminalPosition = {
@@ -48,12 +55,14 @@ module.exports = BackBone.View.extend({
 
         // Création du marqueur
 
-        var status = (this.model.get('empty')) ? 'empty' : 'money';
+        if (bUpdateMarker) {
+            var status = (this.model.get('empty')) ? 'empty' : 'money';
 
-        window.app.map.markers.push(window.app.map.newMarker({
-            latitude: oTerminalPosition.latitude,
-            longitude: oTerminalPosition.longitude
-        }, status, 'DROP', true));
+            window.app.map.markers.push(window.app.map.newMarker({
+                latitude: oTerminalPosition.latitude,
+                longitude: oTerminalPosition.longitude
+            }, status, 'DROP', true));
+        }
 
         this.$el
             .html( _tpl )
@@ -80,7 +89,6 @@ module.exports = BackBone.View.extend({
                 .end()
             .find( ".confirm_problem" )
                 .hide();
-            ;
         return this;
     },
 
@@ -104,5 +112,34 @@ module.exports = BackBone.View.extend({
     goToBack: function ( e ) {
         e.preventDefault();
         BackBone.history.navigate('', true);
+    },
+
+    refreshPosition: function ( e ) {
+        e.preventDefault();
+        var that = this;
+
+        // On récupère une nouvelle position
+        var oPosition;
+        jeolok.getCurrentPosition( {"enableHighAccuracy": true}, function (oError, oGivenPosition){
+            if (oError) {
+                console.log ("oups..");
+                oPosition = {
+                    latitude: 50.84274,
+                    longitude: 4.35154
+                };
+            }
+            else {
+                oPosition = oGivenPosition.coords;
+            }
+
+            // On met à jour la nouvelle position actuelle
+            window.app.currentPosition = oPosition;
+
+            // On raffraichit et recentre la map
+            window.app.map.refresh(oPosition);
+
+            // On raffraichit la distance du terminal
+            that.render(false);
+        } );
     }
 });
