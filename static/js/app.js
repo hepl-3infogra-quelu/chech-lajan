@@ -118,7 +118,7 @@ module.exports = BackBone.Router.extend( {
     views: { },
 
     routes: {
-        "terminals/list": "showTerminalsList",
+        "terminals/list/:radius/:latitude/:longitude": "showTerminalsList",
         "terminals/map": "showTerminalsMap",
         "terminals/details/:id": "showTerminalDetails",
         "": "showTerminalsList"
@@ -155,7 +155,7 @@ module.exports = BackBone.Router.extend( {
         } );
     },
 
-    showTerminalsList: function () {
+    showTerminalsList: function ( fRadius, fLatitude, fLongitude ) {
         console.log( "showTerminalsList" );
 
         var that = this;
@@ -165,8 +165,9 @@ module.exports = BackBone.Router.extend( {
             .collection
                 .fetch( {
                     data: {
-                        latitude: oPosition.latitude,
-                        longitude: oPosition.longitude
+                        latitude: fLatitude ? fLatitude : oPosition.latitude,
+                        longitude: fLongitude ? fLongitude : oPosition.longitude,
+                        radius : fRadius ? fRadius : 5
                     },
                     success: function () {
                         that.views.main.clearContent();
@@ -367,6 +368,17 @@ module.exports = BackBone.View.extend({
         this.initMap();
 
         this.setPosition(oPosition);
+
+        var that = this;
+
+        // On écoute l'événement de déplacement du marqueur de position
+        google.maps.event.addListener(this.positionMarker, 'dragend', function() {
+            var oPos = that.positionMarker.getPosition();
+            console.log(oPos);
+            that.setPosition(oPos);
+            window.app.router.navigate( "terminals/list/5/" + oPos.k + "/" + oPos.D, { trigger: true } );
+            google.maps.event.trigger(this.gMap, 'resize');
+        });
     },
 
     events: { },
@@ -413,7 +425,7 @@ module.exports = BackBone.View.extend({
             this.positionMarker.setMap(null);
             this.positionMarker = null;
         }
-        this.positionMarker = this.newMarker( oPosition, 'me', 'bounce', true );
+        this.positionMarker = this.newMarker( oPosition, 'me', 'bounce', true, true );
     },
 
     refresh: function (oPosition) {
@@ -475,6 +487,9 @@ module.exports = BackBone.View.extend({
         if (bUpdateMarker == undefined) {
             bUpdateMarker = true;
         }
+
+        console.log('updatedAt');
+        console.log(this.model.get("date"));
 
         var oBank = this.model.get( "bank" );
 
@@ -633,7 +648,7 @@ module.exports = BackBone.View.extend({
             .html( _tpl )
             .find( "a" )
                 .find( "img" )
-                    .attr( "src", oBank && oBank.icon ? "banks/" + oBank.icon : "banks/unknown.png" )
+                    .attr( "src", oBank && oBank.icon ? "/banks/" + oBank.icon : "/banks/unknown.png" )
                     .attr( "alt", oBank && oBank.name ? oBank.name : "Inconnu" )
                     .end()
                 .find( "strong" )
@@ -705,7 +720,7 @@ module.exports = BackBone.View.extend({
     },
     goToMap: function ( e ) {
         e.preventDefault();
-        BackBone.history.navigate('terminals/map', true);
+        window.app.router.navigate('terminals/map', true);
     }
 });
 

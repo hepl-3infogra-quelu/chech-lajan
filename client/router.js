@@ -29,7 +29,7 @@ module.exports = BackBone.Router.extend( {
     views: { },
 
     routes: {
-        "terminals/list": "showTerminalsList",
+        "terminals/list/:radius/:latitude/:longitude": "showTerminalsList",
         "terminals/map": "showTerminalsMap",
         "terminals/details/:id": "showTerminalDetails",
         "": "showTerminalsList"
@@ -66,7 +66,7 @@ module.exports = BackBone.Router.extend( {
         } );
     },
 
-    showTerminalsList: function () {
+    showTerminalsList: function ( fRadius, fLatitude, fLongitude ) {
         console.log( "showTerminalsList" );
 
         var that = this;
@@ -76,8 +76,9 @@ module.exports = BackBone.Router.extend( {
             .collection
                 .fetch( {
                     data: {
-                        latitude: oPosition.latitude,
-                        longitude: oPosition.longitude
+                        latitude: fLatitude ? fLatitude : oPosition.latitude,
+                        longitude: fLongitude ? fLongitude : oPosition.longitude,
+                        radius : fRadius ? fRadius : 5
                     },
                     success: function () {
                         that.views.main.clearContent();

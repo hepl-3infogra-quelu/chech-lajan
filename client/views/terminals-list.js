@@ -51,6 +51,6 @@ module.exports = BackBone.View.extend({
     },
     goToMap: function ( e ) {
         e.preventDefault();
-        BackBone.history.navigate('terminals/map', true);
+        window.app.router.navigate('terminals/map', true);
     }
 });

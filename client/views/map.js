@@ -33,6 +33,17 @@ module.exports = BackBone.View.extend({
         this.initMap();
 
         this.setPosition(oPosition);
+
+        var that = this;
+
+        // On écoute l'événement de déplacement du marqueur de position
+        google.maps.event.addListener(this.positionMarker, 'dragend', function() {
+            var oPos = that.positionMarker.getPosition();
+            console.log(oPos);
+            that.setPosition(oPos);
+            window.app.router.navigate( "terminals/list/5/" + oPos.k + "/" + oPos.D, { trigger: true } );
+            google.maps.event.trigger(this.gMap, 'resize');
+        });
     },
 
     events: { },
@@ -79,7 +90,7 @@ module.exports = BackBone.View.extend({
             this.positionMarker.setMap(null);
             this.positionMarker = null;
         }
-        this.positionMarker = this.newMarker( oPosition, 'me', 'bounce', true );
+        this.positionMarker = this.newMarker( oPosition, 'me', 'bounce', true, true );
     },
 
     refresh: function (oPosition) {

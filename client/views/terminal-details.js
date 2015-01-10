@@ -46,6 +46,9 @@ module.exports = BackBone.View.extend({
             bUpdateMarker = true;
         }
 
+        console.log('updatedAt');
+        console.log(this.model.get("date"));
+
         var oBank = this.model.get( "bank" );
 
         var oTerminalPosition = {

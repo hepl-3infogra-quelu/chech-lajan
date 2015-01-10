@@ -56,7 +56,7 @@ module.exports = BackBone.View.extend({
             .html( _tpl )
             .find( "a" )
                 .find( "img" )
-                    .attr( "src", oBank && oBank.icon ? "banks/" + oBank.icon : "banks/unknown.png" )
+                    .attr( "src", oBank && oBank.icon ? "/banks/" + oBank.icon : "/banks/unknown.png" )
                     .attr( "alt", oBank && oBank.name ? oBank.name : "Inconnu" )
                     .end()
                 .find( "strong" )
