@@ -53,14 +53,16 @@ module.exports = BackBone.Router.extend( {
             else {
                 oPosition = oGivenPosition.coords;
             }
+
+            // On stocke la map et ses marqueurs
             window.app.currentPosition = oPosition;
+            that.views.main.initMap( window.app.map = new MapView(oPosition) );
 
             // 3. launch router
             BackBone.history.start( {
                 pushState: true
             } );
 
-            that.views.main.initMap( window.app.map = new MapView(oPosition) );
         } );
     },
 

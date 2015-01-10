@@ -41,6 +41,14 @@ module.exports = BackBone.View.extend({
     clearContent: function () {
         // Cette méthode sert à vider les vues avant d'en rajouter de nouvelles
         this.$el.find("#main div:not(#status)" ).remove();
+
+        // On cache les marqueurs avant de les supprimer (Restent visibles sinon)
+        for (var i = 0; i < window.app.map.markers.length; i++) {
+            if(!window.app.map.markers[i].title){
+                window.app.map.markers[i].setMap(null);
+            }
+        }
+        window.app.map.markers = new Array();
     },
 
     initHeader: function ( HeaderView ) {

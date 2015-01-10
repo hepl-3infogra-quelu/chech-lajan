@@ -26,8 +26,6 @@ module.exports = BackBone.View.extend({
 
         this.model = oTerminalModel;
 
-        console.log(this);
-
         console.log( "TerminalDetailsView:init()" );
 
         if ( !_tpl ) {
@@ -48,7 +46,14 @@ module.exports = BackBone.View.extend({
             "longitude": this.model.get( "longitude" )
         };
 
-        console.log(this.model.get('empty'));
+        // Création du marqueur
+
+        var status = (this.model.get('empty')) ? 'empty' : 'money';
+
+        window.app.map.markers.push(window.app.map.newMarker({
+            latitude: oTerminalPosition.latitude,
+            longitude: oTerminalPosition.longitude
+        }, status, 'DROP', true));
 
         this.$el
             .html( _tpl )

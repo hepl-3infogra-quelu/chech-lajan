@@ -21,6 +21,7 @@ module.exports = BackBone.View.extend({
     el: "<div />",
     gMap: null,
     $map: null,
+    markers: [],
 
     constructor: function (oPosition) {
         BackBone.View.apply( this, arguments );
@@ -53,23 +54,27 @@ module.exports = BackBone.View.extend({
         this.gMap = new google.maps.Map( this.$map[ 0 ], oMapOptions );
     },
 
-    newMarker: function(oPosition, sType, sAnimation) {
+    newMarker: function(oPosition, sType, sAnimation, bCenter, bDraggable) {
+        var oPos = new google.maps.LatLng( oPosition.latitude, oPosition.longitude );
         var sAnimation = (sAnimation)? sAnimation : 'DROP';
+        if ( bCenter) {
+            this.gMap.setCenter(oPos);
+        }
+        if ( bDraggable === undefined ) {
+            bDraggable = false;
+        }
 
-        new google.maps.Marker({
-            position: new google.maps.LatLng(oPosition.latitude, oPosition.longitude),
+        return new google.maps.Marker({
+            position: oPos,
             map: this.gMap,
             animation: google.maps.Animation[ sAnimation.toUpperCase() ],
-            icon: 'img/marker-' + sType + '.png'
+            icon: '/img/marker-' + sType + '.png',
+            draggable: bDraggable
         });
     },
 
     setPosition: function(oPosition) {
-        var oPos = new google.maps.LatLng(oPosition.latitude,
-                    oPosition.longitude);
 
-        this.newMarker(oPosition, 'me', 'bounce');
-
-        this.gMap.setCenter(oPos);
+        return this.newMarker( oPosition, 'me', 'bounce', true );
     }
 });

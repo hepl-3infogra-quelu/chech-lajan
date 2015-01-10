@@ -14,7 +14,7 @@ var _             = require( "underscore" ),
 
 BackBone.$    = require( "jquery" );
 
-var _tpl;
+var _tpl, marker;
 
 module.exports = BackBone.View.extend({
 
@@ -37,12 +37,14 @@ module.exports = BackBone.View.extend({
     render: function () {
         var oBank = this.model.get("bank");
 
+        // Création des marqueurs
+
         var status = (this.model.get('empty')) ? 'empty' : 'money';
 
-        window.app.map.newMarker({
+        window.app.map.markers.push( window.app.map.newMarker({
             latitude: this.model.get('latitude'),
             longitude: this.model.get('longitude')
-        }, status);
+        }, status) );
 
         this.$el
             .html( _tpl )

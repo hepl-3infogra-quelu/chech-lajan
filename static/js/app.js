@@ -142,14 +142,16 @@ module.exports = BackBone.Router.extend( {
             else {
                 oPosition = oGivenPosition.coords;
             }
+
+            // On stocke la map et ses marqueurs
             window.app.currentPosition = oPosition;
+            that.views.main.initMap( window.app.map = new MapView(oPosition) );
 
             // 3. launch router
             BackBone.history.start( {
                 pushState: true
             } );
 
-            that.views.main.initMap( window.app.map = new MapView(oPosition) );
         } );
     },
 
@@ -302,6 +304,14 @@ module.exports = BackBone.View.extend({
     clearContent: function () {
         // Cette méthode sert à vider les vues avant d'en rajouter de nouvelles
         this.$el.find("#main div:not(#status)" ).remove();
+
+        // On cache les marqueurs avant de les supprimer (Restent visibles sinon)
+        for (var i = 0; i < window.app.map.markers.length; i++) {
+            if(!window.app.map.markers[i].title){
+                window.app.map.markers[i].setMap(null);
+            }
+        }
+        window.app.map.markers = new Array();
     },
 
     initHeader: function ( HeaderView ) {
@@ -345,6 +355,7 @@ module.exports = BackBone.View.extend({
     el: "<div />",
     gMap: null,
     $map: null,
+    markers: [],
 
     constructor: function (oPosition) {
         BackBone.View.apply( this, arguments );
@@ -377,24 +388,28 @@ module.exports = BackBone.View.extend({
         this.gMap = new google.maps.Map( this.$map[ 0 ], oMapOptions );
     },
 
-    newMarker: function(oPosition, sType, sAnimation) {
+    newMarker: function(oPosition, sType, sAnimation, bCenter, bDraggable) {
+        var oPos = new google.maps.LatLng( oPosition.latitude, oPosition.longitude );
         var sAnimation = (sAnimation)? sAnimation : 'DROP';
+        if ( bCenter) {
+            this.gMap.setCenter(oPos);
+        }
+        if ( bDraggable === undefined ) {
+            bDraggable = false;
+        }
 
-        new google.maps.Marker({
-            position: new google.maps.LatLng(oPosition.latitude, oPosition.longitude),
+        return new google.maps.Marker({
+            position: oPos,
             map: this.gMap,
             animation: google.maps.Animation[ sAnimation.toUpperCase() ],
-            icon: 'img/marker-' + sType + '.png'
+            icon: '/img/marker-' + sType + '.png',
+            draggable: bDraggable
         });
     },
 
     setPosition: function(oPosition) {
-        var oPos = new google.maps.LatLng(oPosition.latitude,
-                    oPosition.longitude);
 
-        this.newMarker(oPosition, 'me', 'bounce');
-
-        this.gMap.setCenter(oPos);
+        return this.newMarker( oPosition, 'me', 'bounce', true );
     }
 });
 
@@ -447,7 +462,14 @@ module.exports = BackBone.View.extend({
             "longitude": this.model.get( "longitude" )
         };
 
-        console.log(this.model.get('empty'));
+        // Création du marqueur
+
+        var status = (this.model.get('empty')) ? 'empty' : 'money';
+
+        window.app.map.markers.push(window.app.map.newMarker({
+            latitude: oTerminalPosition.latitude,
+            longitude: oTerminalPosition.longitude
+        }, status, 'DROP', true));
 
         this.$el
             .html( _tpl )
@@ -518,7 +540,7 @@ var _             = require( "underscore" ),
 
 BackBone.$    = require( "jquery" );
 
-var _tpl;
+var _tpl, marker;
 
 module.exports = BackBone.View.extend({
 
@@ -541,12 +563,14 @@ module.exports = BackBone.View.extend({
     render: function () {
         var oBank = this.model.get("bank");
 
+        // Création des marqueurs
+
         var status = (this.model.get('empty')) ? 'empty' : 'money';
 
-        window.app.map.newMarker({
+        window.app.map.markers.push( window.app.map.newMarker({
             latitude: this.model.get('latitude'),
             longitude: this.model.get('longitude')
-        }, status);
+        }, status) );
 
         this.$el
             .html( _tpl )
