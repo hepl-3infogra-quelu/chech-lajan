@@ -39,12 +39,7 @@ module.exports = BackBone.View.extend({
         "click #refresh-me": "refreshPosition"
     },
 
-    render: function (bUpdateMarker) {
-        // Permet d'éviter une "empilation" de marqueur lors du refresh de position
-        if (bUpdateMarker == undefined) {
-            bUpdateMarker = true;
-        }
-
+    render: function () {
         var oBank = this.model.get( "bank" );
 
         var oTerminalPosition = {
@@ -52,16 +47,12 @@ module.exports = BackBone.View.extend({
             "longitude": this.model.get( "longitude" )
         };
 
-        // Création du marqueur
+        var status = (this.model.get('empty')) ? 'empty' : 'money';
 
-        if (bUpdateMarker) {
-            var status = (this.model.get('empty')) ? 'empty' : 'money';
-
-            window.app.map.markers.push(window.app.map.newMarker({
-                latitude: oTerminalPosition.latitude,
-                longitude: oTerminalPosition.longitude
-            }, status, 'DROP', true));
-        }
+        window.app.map.markers.push(window.app.map.newMarker({
+            latitude: oTerminalPosition.latitude,
+            longitude: oTerminalPosition.longitude
+        }, status, 'DROP', true));
 
         this.$el
             .attr( "class", "col1" )
@@ -80,7 +71,7 @@ module.exports = BackBone.View.extend({
                     .attr( "alt", oBank && oBank.name ? oBank.name : "Inconnu" )
                     .end()
             .find( ".distance" )
-                .text( "~" + ( jeyodistans( oTerminalPosition, window.app.currentPosition ) * 1000 ) + "m" )
+                .text( "~" + parseInt( jeyodistans( oTerminalPosition, window.app.currentPosition ) * 1000 ) + "m" )
                 .end()
             .find( "address" )
                 .text( this.model.get( "address" ) )
@@ -106,12 +97,14 @@ module.exports = BackBone.View.extend({
     toggleEmptyState: function( e ) {
         e.preventDefault();
 
+        var that = this;
+
         if ( window.confirm( "Voulez vous vraiment mettre ce distributeur à jour ?" ) ) {
             this.model.set("empty", true );
             this.model.save( null, {
                 url: "/api/terminals/" + this.model.get( "id" ) + "/empty",
                 success: function() {
-                    $(".problems").show();
+                    that.render();
                 }
             } );
         }

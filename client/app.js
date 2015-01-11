@@ -21,5 +21,4 @@ $( function() {
 
     window.app.router = new Router();
     window.app.router.start();
-
 } );

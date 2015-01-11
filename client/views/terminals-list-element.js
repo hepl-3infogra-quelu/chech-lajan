@@ -72,12 +72,12 @@ module.exports = BackBone.View.extend({
                     .text( oBank && oBank.name ? oBank.name : "Inconnu" )
                     .end()
                 .find( "span.distance" )
-                    .text( "~" + ( jeyodistans( oTerminalPosition, window.app.currentPosition ) * 1000 ) + "m" );
+                    .text( "~" + parseInt( ( jeyodistans( oTerminalPosition, window.app.currentPosition ) * 1000 ) ) + "m" );
         return this;
     },
 
     showTerminal: function ( e ) {
         e.preventDefault();
-        window.app.router.navigate( "terminals/details/" + this.model.get( "id" ), { trigger: true } );
+        window.app.router.navigate( "terminals/details/" + this.model.get( "id" ), true );
     }
 });

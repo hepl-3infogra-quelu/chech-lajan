@@ -55,6 +55,7 @@ module.exports = BackBone.Router.extend( {
 
             // On stocke la map et ses marqueurs
             window.app.currentPosition = oPosition;
+
             that.views.main.initMap( window.app.map = new MapView(oPosition) );
 
             // 3. launch router
@@ -70,6 +71,7 @@ module.exports = BackBone.Router.extend( {
 
         var that = this;
         this.views.main.loading(true);
+
         var oTerminalsCollection = new TerminalsCollection();
         ( this.views.list = new TerminalsListView( oTerminalsCollection ) )
             .collection
@@ -77,7 +79,7 @@ module.exports = BackBone.Router.extend( {
                     data: {
                         latitude: fLatitude ? fLatitude : oPosition.latitude,
                         longitude: fLongitude ? fLongitude : oPosition.longitude,
-                        radius : fRadius ? fRadius : 3
+                        radius : fRadius ? fRadius : 5
                     },
                     success: function () {
                         that.views.main.clearContent();

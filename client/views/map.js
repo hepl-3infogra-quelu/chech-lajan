@@ -33,16 +33,6 @@ module.exports = BackBone.View.extend({
         this.initMap();
 
         this.setPosition(oPosition);
-
-        var that = this;
-
-        // On écoute l'événement de déplacement du marqueur de position
-        google.maps.event.addListener(this.positionMarker, 'dragend', function() {
-            var oPos = that.positionMarker.getPosition();
-            console.log(oPos);
-            that.setPosition(oPos);
-            window.app.router.navigate( "terminals/list/5/" + oPos.k + "/" + oPos.D, { trigger: true } );
-        });
     },
 
     events: { },
@@ -90,10 +80,23 @@ module.exports = BackBone.View.extend({
 
     setPosition: function(oPosition) {
         if (this.positionMarker) {
+            google.maps.event.clearInstanceListeners(this.positionMarker);
             this.positionMarker.setMap(null);
             this.positionMarker = null;
         }
         this.positionMarker = this.newMarker( oPosition, 'me', 'bounce', true, true );
+
+        var that = this;
+
+        // On écoute l'événement de déplacement du marqueur de position
+        google.maps.event.addListener(this.positionMarker, 'dragend', function() {
+            var oPosition = {
+                latitude: that.positionMarker.getPosition().lat(),
+                longitude: that.positionMarker.getPosition().lng()
+            };
+            window.app.currentPosition = oPosition;
+            window.app.router.navigate( "terminals/list/5/" + oPosition.latitude + "/" + oPosition.longitude, true );
+        });
     },
 
     centerMap: function(oPosition) {
@@ -103,9 +106,8 @@ module.exports = BackBone.View.extend({
     refresh: function (oPosition) {
         var oPos = new google.maps.LatLng( oPosition.latitude, oPosition.longitude );
 
-        google.maps.event.trigger(this.gMap, 'resize');
         this.setPosition(oPosition);
-        this.gMap.setCenter(oPos);
+        this.centerMap(oPos);
 
         console.log('refresh');
     }

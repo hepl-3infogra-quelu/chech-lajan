@@ -44,6 +44,7 @@ module.exports = BackBone.View.extend({
 
     refreshPosition: function ( e ) {
         e.preventDefault();
+
         var that = this;
 
         // On récupère une nouvelle position
@@ -67,13 +68,13 @@ module.exports = BackBone.View.extend({
             window.app.map.refresh(oPosition);
 
             // On raffraichit la distance du terminal
-            that.render(false);
+            window.app.router.navigate( "", true );
         } );
     },
 
     showList: function ( e ) {
         e.preventDefault();
 
-        window.app.router.navigate( "", true );
+        window.app.router.navigate( "terminals/list/5/" + window.app.currentPosition.latitude + "/" + window.app.currentPosition.longitude, true );
     }
 });

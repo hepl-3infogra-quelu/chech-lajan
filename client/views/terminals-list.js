@@ -29,13 +29,13 @@ module.exports = BackBone.View.extend({
         console.log( "TerminalListView:init()" );
 
         if (!_tpl) {
-            _tpl = $("#tpl-result").remove().text();
+            _tpl = $( "#tpl-result" ).remove().text();
         }
     },
 
     events: {},
 
-    setStatus: function (sStatut) {
+    setStatus: function ( sStatut ) {
         this.$el.find( "#status .text" ).text(sStatut);
     },
 
