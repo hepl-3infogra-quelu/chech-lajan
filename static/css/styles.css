@@ -315,202 +315,168 @@ td,
 th {
   padding: 0;
 }
+a {
+  text-decoration: none;
+}
 html,
 body {
-  height: 90%;
-font-family
+  height: 100%;
+  font-family: 'Helvetica Neue', Helvetica, sans-serif;
 }
 body {
-  background: #3f4245;
+  background: #3a3f4f;
+  overflow: hidden;
 }
-@media all and (max-width: 640px) {
+@media all and (max-width: 670px) {
   body {
     font-size: 0.8em;
   }
 }
-header {
-  color: #fff;
-  text-align: center;
-}
-header nav a {
-  display: block;
+.col1,
+.col2 {
+  display: inline-block;
   float: left;
-  width: 50%;
-  padding: 1em;
-  border: 1px solid #000;
-  border-left: none;
-  color: #fff;
-  text-decoration: none;
-  font-size: 1.5em;
+  margin: 0;
 }
-header nav a:hover {
-  text-decoration: underline;
+.col1 {
+  width: 25%;
 }
-@media all and (max-width: 640px) {
-  header nav a {
-    height: 70px;
-  }
-  header nav a .text {
-    display: none;
-  }
-  header nav a.list {
-    background: url("../img/icon-list.png") center center no-repeat;
-  }
-  header nav a.add {
-    background: url("../img/icon-add.png") center center no-repeat;
+@media all and (max-width: 1000px) {
+  .col1 {
+    width: 40%;
   }
 }
-#map-canvas {
-  margin: 0 auto;
-  width: 100%;
-  height: 100%;
-}
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.3);
-}
-.container {
-  position: relative;
-  top: 12.5%;
-  background: #fff;
+.col2 {
   width: 75%;
-  height: 75%;
-  margin: 0 auto;
-  color: #3f4245;
-  overflow-y: auto;
-  z-index: 1;
 }
-@media all and (max-width: 640px) {
-  .container {
-    width: 100%;
-    left: 0;
+@media all and (max-width: 1000px) {
+  .col2 {
+    width: 60%;
   }
 }
-.container .back {
-  display: block;
-  background: #cd5f5f;
-  padding: 1em;
-  text-align: center;
-  text-decoration: none;
+header {
+  height: 100px;
   color: #fff;
-}
-.container .back:hover {
-  background: #d77f7f;
-}
-.container h2 {
-  font-size: 1.5em;
-  margin: 1em;
-}
-.container h2 img {
-  margin-right: 0.5em;
-}
-.container ul {
-  margin: 1em 1.5em;
-}
-.container ul li {
-  border-bottom: 1px solid rgba(0,0,0,0.2);
-}
-.container ul li:first-child {
-  border-top: 1px solid rgba(0,0,0,0.2);
-}
-.container ul li:hover {
-  background: #ededed;
-}
-.container ul li a {
-  padding: 1em;
-  line-height: 2em;
-  display: block;
-  color: #3f4245;
-  text-decoration: none;
-}
-.container ul li a strong {
-  margin-left: 1em;
-}
-.container ul li a span {
-  float: right;
-}
-.container .info {
   text-align: center;
 }
-.container .half {
-  width: 50%;
+header h1#title {
+  line-height: 100px;
+  background: #2980b9;
+}
+@media all and (max-width: 670px) {
+  header h1#title {
+    width: 100%;
+    line-height: 50px;
+  }
+}
+header nav#menu a {
   float: left;
+  display: block;
+  width: 100px;
+  height: 100%;
+  color: #fff;
+  line-height: 50px;
+  padding-top: 50px;
 }
-.small {
-  position: absolute;
-  height: auto;
-  width: 50%;
-  padding-bottom: 1.5em;
-  top: 159px;
-  left: 25%;
-}
-@media all and (max-width: 640px) {
-  .small {
-    width: 100%;
-    left: 0;
-    top: 133px;
+@media all and (max-width: 670px) {
+  header nav#menu a {
+    width: 33.33333333333%;
   }
 }
-.small h2 {
-  display: inline-block;
-  margin: 1em 0 0.5em;
+header nav#menu .list {
+  background: #2ecc71 url("../img/icon-list.png") center 30% no-repeat;
 }
-.small address {
-  line-height: 2.5em;
+header nav#menu .add {
+  background: #2cddc8 url("../img/icon-add.png") center 30% no-repeat;
 }
-.small #distance {
-  display: inline-block;
-  padding: 8px;
-  background: #2c3e50;
-  color: #fff;
-  font-weight: bold;
-  vertical-align: middle;
+header nav#menu .refresh {
+  background: #ffb87d url("../img/icon-refresh.png") center 30% no-repeat;
 }
-.small #refresh-me {
+@media all and (max-width: 670px) {
+  header nav#menu {
+    width: 100%;
+  }
+}
+#main {
+  height: 100%;
+}
+#main aside {
+  color: #3a3f4f;
+  height: 100%;
+  overflow-y: auto;
+  background: #e9ebef;
+}
+#main aside h2 {
   position: relative;
-  display: inline-block;
-  padding: 15px;
-  background: #2c3e50;
-  text-decoration: none;
-  vertical-align: middle;
+  text-align: center;
+  line-height: 2em;
+  padding: 1em 0;
+  background: #3a3f4f;
+  margin-bottom: 0.8em;
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #fff;
 }
-.small #refresh-me span {
-  display: none;
-}
-.small #refresh-me:after {
+#main aside h2 .triangle {
   content: "";
   position: absolute;
-  width: 30px;
-  height: 30px;
-  top: 0;
-  left: 0;
-  background: url("../img/icon-refresh.png") no-repeat;
+  bottom: -20px;
+  left: 30px;
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+  border-top-color: #3a3f4f;
 }
-.small .empty {
-  line-height: 2em;
-  font-size: 1.5em;
-  color: #c0392b;
+#main aside h2 img {
+  margin-right: 0.5em;
 }
-.small .problems {
-  display: none;
-  margin: 8px auto 0;
-  border-top: 1px solid #bdc3c7;
-  padding: 0 0 0;
-}
-.small .problems a {
+#main aside ul li a {
+  position: relative;
   display: block;
-  margin: 8px auto 0;
-  padding: 6px 6px;
-  text-align: center;
-  background: #e88834;
-  color: #fff;
-  vertical-align: middle;
-  text-decoration: none;
+  padding: 1.5em 0;
+  line-height: 1.5em;
 }
-.small .problems a:first-child {
-  background: #e95a4c;
+#main aside ul li a:hover {
+  background: #d4d7df;
+}
+#main aside ul li a img {
+  margin: 0 1em;
+}
+#main aside .info {
+  position: relative;
+  padding: 2em 1em;
+}
+#main aside .info address {
+  padding-left: 30px;
+  min-height: 22px;
+  background: url("../img/icon-address.png") left center no-repeat;
+}
+#main .distance {
+  position: absolute;
+  top: 0;
+  right: 0;
+  line-height: 1em;
+  padding: 0.2em;
+  color: #fff;
+  background: #16a085;
+}
+#main .problem {
+  display: block;
+  padding: 1em 0;
+  margin-top: 3em;
+  text-align: center;
+  color: #fff;
+  background: #c0392b;
+}
+#main .problems {
+  background: #e74c3c;
+}
+#main .problems a {
+  display: block;
+  padding: 1em;
+  color: #fff;
+  border-bottom: 1px #fff solid;
+}
+#main #map-canvas {
+  height: 100%;
 }

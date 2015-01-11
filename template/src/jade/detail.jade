@@ -1,15 +1,16 @@
 extends layout
 
 block content
-    
-    
-    div.container.small
-        a.back(href="list.html") Retour
+    aside.col1
+        h2
+            img(src="img/bpost.png", alt="BPost Banque")
+            | BPost Banque
         div.info
-            h2 
-                img(src="../../static/banks/bpost.png", alt="BPost Banque") 
-                | BPost Banque
             address
-            | Rue Hovémont 22
-            br
-            | 4910 Theux
+                | Rue Hovémont 22
+                br
+                | 4910 Theux
+            span.distance +-450m
+        a.problem(href="") Problème ?
+        div.problems
+            a(href="") Distributeur vide ou en panne

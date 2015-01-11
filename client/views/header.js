@@ -9,6 +9,7 @@
 "use strict";
 
 var _             = require( "underscore" ),
+    jeolok        = require( "jeolok" ),
     $             = require( "jquery" ),
     BackBone      = require( "backbone" );
 
@@ -18,7 +19,7 @@ var _tpl;
 
 module.exports = BackBone.View.extend({
 
-    el: "<header />",
+    el: "<div />",
 
     constructor: function () {
         BackBone.View.apply( this, arguments );
@@ -31,31 +32,48 @@ module.exports = BackBone.View.extend({
     },
 
     events: {
-        "click #reload": "reloadButtonClicked"
+        "click #refresh": "refreshPosition",
+        "click #list": "showList"
     },
 
     render: function () {
         this.$el.html( _tpl );
 
-        this.$status = this.$el.find( "#status" );
-
         return this;
     },
 
-    loading: function( bLoadingState ) {
-        this.$el.find( "#status" ).toggleClass( "loading", bLoadingState );
-    },
-
-    getStatus: function() {
-        return this.$status.text();
-    },
-
-    setStatus: function( sText ) {
-        this.$status.text( sText );
-    },
-
-    reloadButtonClicked: function( e ) {
+    refreshPosition: function ( e ) {
         e.preventDefault();
-        console.log( "reloadButtonClicked" );
+        var that = this;
+
+        // On récupère une nouvelle position
+        var oPosition;
+        jeolok.getCurrentPosition( {"enableHighAccuracy": true}, function (oError, oGivenPosition){
+            if (oError) {
+                console.log ("oups..");
+                oPosition = {
+                    latitude: 50.84274,
+                    longitude: 4.35154
+                };
+            }
+            else {
+                oPosition = oGivenPosition.coords;
+            }
+
+            // On met à jour la nouvelle position actuelle
+            window.app.currentPosition = oPosition;
+
+            // On raffraichit et recentre la map
+            window.app.map.refresh(oPosition);
+
+            // On raffraichit la distance du terminal
+            that.render(false);
+        } );
+    },
+
+    showList: function ( e ) {
+        e.preventDefault();
+
+        window.app.router.navigate( "", true );
     }
 });

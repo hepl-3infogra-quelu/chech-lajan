@@ -1,1 +1,21 @@
 extends layout
+
+block content
+    aside.col1
+        h2 3 distributeurs proches
+        ul
+            li
+                a(href="detail.html", style="color: rgb(0, 55, 118);")
+                    img(src="img/bpost.png", alt="BPost Banque")
+                    strong BPost Banque
+                    span.distance +-268m
+            li
+                a(href="detail.html")
+                    img(src="img/bnp.png", alt="BNP Paribas Fortis")
+                    strong BNP Paribas Fortis
+                    span.distance +-428m
+            li
+                a(href="detail.html")
+                    img(src="img/ing.png", alt="ING")
+                    strong ING
+                    span.distance +-450m

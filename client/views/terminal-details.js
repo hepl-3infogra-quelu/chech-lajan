@@ -11,7 +11,6 @@
 var _             = require( "underscore" ),
     $             = require( "jquery" ),
     BackBone      = require( "backbone" ),
-    jeolok        = require( "jeolok" ),
     jeyodistans   = require( "jeyo-distans" );
 
 BackBone.$    = require( "jquery" );
@@ -20,7 +19,7 @@ var _tpl;
 
 module.exports = BackBone.View.extend({
 
-    el: "<div />",
+    el: "<aside />",
 
     constructor: function (oTerminalModel) {
         BackBone.View.apply( this, arguments );
@@ -36,7 +35,6 @@ module.exports = BackBone.View.extend({
 
     events: {
         "click .problems a": "toggleEmptyState",
-        "click .back": "goToBack",
         "click #refresh-me": "refreshPosition"
     },
 
@@ -68,18 +66,23 @@ module.exports = BackBone.View.extend({
         }
 
         this.$el
+            .attr( "class", "col1" )
             .html( _tpl )
-            .attr( "class", "overlay" )
-            .find("h2 span")
-                .css( "color", "#" + ( (oBank && oBank.color) ? oBank.color : "333" ) )
+            .find("h2")
+                .css( "background", "#" + ( (oBank && oBank.color) ? oBank.color : "333" ) )
+                .end()
+            .find(".triangle")
+                .css( "border-top-color", "#" + ( (oBank && oBank.color) ? oBank.color : "333" ) )
+                .end()
+            .find("h2 strong")
                 .text((oBank && oBank.name) ? oBank.name : "Inconnu")
                 .end()
                 .find("img")
                     .attr( "src", (oBank && oBank.icon) ? "/banks/" + oBank.icon : "/banks/unknown.png" )
                     .attr( "alt", oBank && oBank.name ? oBank.name : "Inconnu" )
                     .end()
-            .find( "#distance" )
-                .text( ( jeyodistans( oTerminalPosition, window.app.currentPosition ) * 1000 ) + "m" )
+            .find( ".distance" )
+                .text( "~" + ( jeyodistans( oTerminalPosition, window.app.currentPosition ) * 1000 ) + "m" )
                 .end()
             .find( "address" )
                 .text( this.model.get( "address" ) )
@@ -87,11 +90,9 @@ module.exports = BackBone.View.extend({
             .find( ".empty" )
                 .toggle( this.model.get( "empty" ) )
                 .end()
-            .find( ".problems" )
-                .toggle( this.model.get( "empty" ) )
+            .find( ".problem" )
+                // .toggle( this.model.get( "empty" ) )
                 .end()
-            .find( ".confirm_problem" )
-                .hide();
         return this;
     },
 
@@ -109,40 +110,6 @@ module.exports = BackBone.View.extend({
                     .find( ".problems" )
                         .hide();
             }
-        } );
-    },
-
-    goToBack: function ( e ) {
-        e.preventDefault();
-        BackBone.history.navigate('', true);
-    },
-
-    refreshPosition: function ( e ) {
-        e.preventDefault();
-        var that = this;
-
-        // On récupère une nouvelle position
-        var oPosition;
-        jeolok.getCurrentPosition( {"enableHighAccuracy": true}, function (oError, oGivenPosition){
-            if (oError) {
-                console.log ("oups..");
-                oPosition = {
-                    latitude: 50.84274,
-                    longitude: 4.35154
-                };
-            }
-            else {
-                oPosition = oGivenPosition.coords;
-            }
-
-            // On met à jour la nouvelle position actuelle
-            window.app.currentPosition = oPosition;
-
-            // On raffraichit et recentre la map
-            window.app.map.refresh(oPosition);
-
-            // On raffraichit la distance du terminal
-            that.render(false);
         } );
     }
 });

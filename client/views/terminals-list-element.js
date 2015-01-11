@@ -63,8 +63,8 @@ module.exports = BackBone.View.extend({
                     .css( "color", "#" + ( oBank && oBank.color ? oBank.color : "333" ) )
                     .text( oBank && oBank.name ? oBank.name : "Inconnu" )
                     .end()
-                .find( "span" )
-                    .text( ( jeyodistans( oTerminalPosition, window.app.currentPosition ) * 1000 ) + "m" );
+                .find( "span.distance" )
+                    .text( "~" + ( jeyodistans( oTerminalPosition, window.app.currentPosition ) * 1000 ) + "m" );
         return this;
     },
 

@@ -19,7 +19,7 @@ var TerminalElementView = require("./terminals-list-element");
 
 module.exports = BackBone.View.extend({
 
-    el: "<div />",
+    el: "<aside />",
 
     constructor: function (oTerminalsCollection) {
         BackBone.View.apply( this, arguments );
@@ -33,12 +33,15 @@ module.exports = BackBone.View.extend({
         }
     },
 
-    events: {
-        "click .back": "goToMap"
+    events: {},
+
+    setStatus: function (sStatut) {
+        this.$el.find( "#status .text" ).text(sStatut);
     },
+
     render: function () {
         this.$el
-            .attr( "class", "overlay" )
+            .attr( "class", "col1" )
             .html( _tpl );
 
         var $list = this.$el.find( "ul" );
@@ -48,9 +51,5 @@ module.exports = BackBone.View.extend({
         } );
 
         return this;
-    },
-    goToMap: function ( e ) {
-        e.preventDefault();
-        window.app.router.navigate('terminals/map', true);
     }
 });

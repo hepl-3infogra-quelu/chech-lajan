@@ -28,19 +28,19 @@ module.exports = BackBone.View.extend({
     },
 
     loading: function ( bLoadingState, sNewStatus ) {
-        if( bLoadingState ) {
-            this._status = window.app.router.views.header.getStatus();
-            window.app.router.views.header.loading( true );
-            window.app.router.views.header.setStatus( sNewStatus || "chargement..." );
-        } else {
-            window.app.router.views.header.loading( false );
-            window.app.router.views.header.setStatus( sNewStatus );
-        }
+        // if( bLoadingState ) {
+        //     this._status = window.app.router.views.header.getStatus();
+        //     window.app.router.views.header.loading( true );
+        //     window.app.router.views.header.setStatus( sNewStatus || "chargement..." );
+        // } else {
+        //     window.app.router.views.header.loading( false );
+        //     window.app.router.views.header.setStatus( sNewStatus );
+        // }
     },
 
     clearContent: function () {
         // Cette méthode sert à vider les vues avant d'en rajouter de nouvelles
-        this.$el.find("#main div:not(#status)" ).remove();
+        this.$el.find("#main aside:not(#map-canvas)" ).remove();
 
         // On cache les marqueurs avant de les supprimer (Restent visibles sinon)
         for (var i = 0; i < window.app.map.markers.length; i++) {
@@ -52,15 +52,15 @@ module.exports = BackBone.View.extend({
     },
 
     initHeader: function ( HeaderView ) {
-        this.$el.find( "#main" ).append( HeaderView.$el );
+        this.$el.find( "#header" ).append( HeaderView.$el );
     },
 
     initList: function ( TerminalListView ) {
-        this.$el.find( "#main" ).append( TerminalListView.$el );
+        this.$el.find( "#main" ).prepend( TerminalListView.$el );
     },
 
     initDetails: function ( TerminalDetailsView ) {
-        this.$el.find( "#main" ).append( TerminalDetailsView.$el );
+        this.$el.find( "#main" ).prepend( TerminalDetailsView.$el );
     },
 
     initMap: function ( MapView ) {

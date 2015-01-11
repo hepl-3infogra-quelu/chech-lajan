@@ -8,14 +8,15 @@ html(lang="fr")
         link(rel="stylesheet", type="text/css", href="css/styles.css")
     body
         header
-            h1 Cash-Cache
-            nav
-                a.list(href="list.html")
-                    span.text Distributeurs proches
-                a.add(href="add.html")
-                    span.text Ajouter un distributeur
-        div#map-canvas
-        block content
+            h1#title.col1 Cash-Cache
+            nav#menu.col2
+                a.list(href="index.html" title="Liste des distributeurs proches") Liste
+                a.add(href="add.html" title="Ajouter un distributeur") Ajouter
+                a.refresh(href="#" title="Ajouter un distributeur") Rafraichir
+        section#main
+            block content
+            div#map-canvas.col2
+
         script(type="text/javascript", src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBNV1rxti4vR6khDSlCBIOTj_Pvc_xF5AI")
         script(type="text/javascript", src="http://code.jquery.com/jquery-2.1.1.min.js")
         script(type="text/javascript", src="js/main.js")

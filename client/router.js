@@ -78,12 +78,12 @@ module.exports = BackBone.Router.extend( {
                     data: {
                         latitude: fLatitude ? fLatitude : oPosition.latitude,
                         longitude: fLongitude ? fLongitude : oPosition.longitude,
-                        radius : fRadius ? fRadius : 5
+                        radius : fRadius ? fRadius : 3
                     },
                     success: function () {
                         that.views.main.clearContent();
                         that.views.main.initList( that.views.list.render() );
-                        that.views.main.loading( false, oTerminalsCollection.length + " résultats" );
+                        that.views.list.setStatus( oTerminalsCollection.length + " résultats" );
                     }
                 } );
     },

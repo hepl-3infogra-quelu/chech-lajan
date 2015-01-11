@@ -42,13 +42,16 @@ module.exports = BackBone.View.extend({
             console.log(oPos);
             that.setPosition(oPos);
             window.app.router.navigate( "terminals/list/5/" + oPos.k + "/" + oPos.D, { trigger: true } );
-            google.maps.event.trigger(this.gMap, 'resize');
         });
     },
 
     events: { },
 
     render: function () {
+        this.$el.html( _tpl ).attr( "id", "map-canvas" );
+
+        this.$status = this.$el.find( "#status" );
+
         return this;
     },
 

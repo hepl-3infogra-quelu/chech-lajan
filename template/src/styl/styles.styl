@@ -4,164 +4,134 @@ meyer-reset()
 box-sizing-reset()
 normalize()
 
-dark = #3f4245
-btn = #cd5f5f
+breakpoint-large = 1000px
+breakpoint-medium = 670px
+
+bg-color = #3a3f4f
+
+a
+    text-decoration none
 
 html, body
-	height 90%
-	font-family
+    height 100%
+    font-family 'Helvetica Neue', Helvetica, sans-serif
 
 body
-	background dark
-	+media-query( all, max-width 640px )
-		font-size .8em
+    background bg-color
+    overflow hidden
+    +media-query( all, max-width breakpoint-medium )
+        font-size .8em
+
+.col1, .col2
+    display inline-block
+    float left
+    margin 0
+
+.col1
+    width 25%
+    +media-query( all, max-width breakpoint-large )
+        width 40%
+
+.col2
+    width 75%
+    +media-query( all, max-width breakpoint-large )
+        width 60%
 
 header
-	color #fff
-	text-align center
-	nav
-		a
-			display block
-			float left
-			width 50%
-			padding 1em
+    height 100px
+    color #fff
+    text-align center
 
-			border 1px solid #000
-			border-left none
-			color #fff
-			text-decoration none
-			font-size 1.5em
-			&:hover
-				text-decoration underline
-			+media-query( all, max-width 640px )
-				height 70px
-				.text
-					display none
-				&.list
-					background url(../img/icon-list.png) center center no-repeat
-				&.add
-					background url(../img/icon-add.png) center center no-repeat
+    h1#title
+        line-height 100px
+        background #2980b9
+        +media-query( all, max-width breakpoint-medium )
+            width 100%
+            line-height 50px
+    nav#menu
+        a
+            float left
+            display block
+            width 100px
+            height 100%
+            color #fff
+            line-height 50px
+            padding-top 50px
+            +media-query( all, max-width breakpoint-medium )
+                width 33.33333333333%
+        .list
+            background #2ecc71 url(../img/icon-list.png) center 30% no-repeat
+        .add
+            background #2cddc8 url(../img/icon-add.png) center 30% no-repeat
+        .refresh
+            background #ffb87d url(../img/icon-refresh.png) center 30% no-repeat
+        +media-query( all, max-width breakpoint-medium )
+            width 100%
 
-#map-canvas
-	margin 0 auto
-	width 100%
-	height 100%
-
-.overlay
-	position absolute
-	top 0
-	left 0
-	width 100%
-	height 100%
-	background rgba(0,0,0,0.3)
-
-.container
-	position relative
-	top 12.5%
-	background #fff
-	width 75%
-	height 75%
-	margin 0 auto
-	color dark
-	overflow-y auto
-	z-index 1
-	+media-query( all, max-width 640px )
-		width 100%
-		left 0
-	.back
-		display block
-		background btn
-		padding 1em
-		text-align center
-		text-decoration none
-		color #fff
-		&:hover
-			background lighten(btn, 20%)
-	h2
-		font-size 1.5em
-		margin 1em
-		img
-			margin-right .5em
-	ul
-		margin 1em 1.5em
-		li
-			border-bottom 1px solid rgba(0,0,0, .2)
-			&:first-child
-				border-top 1px solid rgba(0,0,0, .2)
-			&:hover
-				background #ededed
-			a
-				padding 1em
-				line-height 2em
-				display block
-				color dark
-				text-decoration none
-				strong
-					margin-left 1em
-				span
-					float right
-	.info
-		text-align center
-	.half
-		width 50%
-		float left
-.small
-	position absolute
-	height auto
-	width 50%
-	padding-bottom 1.5em
-	top 159px
-	left 25%
-	+media-query( all, max-width 640px )
-		width 100%
-		left 0
-		top 133px
-	h2
-		display inline-block
-		margin 1em 0 .5em
-	address
-		line-height 2.5em
-	#distance
-		display inline-block
-		padding 8px
-		background #2c3e50
-		color white
-		font-weight bold
-		vertical-align middle
-	#refresh-me
-		position relative
-		display inline-block
-		padding 15px
-		background #2c3e50
-		text-decoration none
-		vertical-align middle
-		span
-			display none
-		&:after
-			content ""
-			position absolute
-			width 30px
-			height 30px
-			top 0
-			left 0
-			background url(../img/icon-refresh.png) no-repeat
-	.empty
-		line-height 2em
-		font-size 1.5em
-		color #c0392b
-	.problems
-		display none
-		margin 8px auto 0
-		border-top 1px solid #BDC3C7
-		padding 0 0 0
-		a
-			display block
-			margin 8px auto 0
-			padding 6px 6px
-			text-align center
-			background lighten( #E67E22, 8% )
-			color white
-			vertical-align middle
-			text-decoration none
-			&:first-child
-				background lighten( #E74C3C, 8% )
+#main
+    height 100%
+    aside
+        color bg-color
+        height 100%
+        overflow-y auto
+        background lighten(bg-color, 90%)
+        h2
+            position relative
+            text-align center
+            line-height 2em
+            padding 1em 0
+            background bg-color
+            margin-bottom .8em
+            font-weight bold
+            font-size 1.2em
+            color #fff
+            .triangle
+                content ""
+                position absolute
+                bottom -20px
+                left 30px
+                triangle( down, 10px, bg-color)
+            img
+                margin-right .5em
+        ul
+            li
+                a
+                    position relative
+                    display block
+                    padding 1.5em 0
+                    line-height 1.5em
+                    &:hover
+                        background lighten(bg-color, 80%)
+                    img
+                        margin 0 1em
+        .info
+            position relative
+            padding 2em 1em
+            address
+                padding-left 30px
+                min-height 22px
+                background url(../img/icon-address.png) left center no-repeat
+    .distance
+        position absolute
+        top 0
+        right 0
+        line-height 1em
+        padding .2em
+        color #fff
+        background #16a085
+    .problem
+        display block
+        padding 1em 0
+        margin-top 3em
+        text-align center
+        color #fff
+        background #c0392b
+    .problems
+        background #e74c3c
+        a
+            display block
+            padding 1em
+            color #fff
+            border-bottom 1px #fff solid
+    #map-canvas
+        height 100%
