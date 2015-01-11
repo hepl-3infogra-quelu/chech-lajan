@@ -112,6 +112,49 @@ header
                 padding-left 30px
                 min-height 22px
                 background url(../img/icon-address.png) left center no-repeat
+            input[type="range"]
+                -webkit-appearance none
+                -webkit-tap-highlight-color rgba(255, 255, 255, 0)
+                width 100%
+                height 5px
+                margin .5em auto
+                border none
+                padding 1px 2px
+                border-radius 14px
+                background #232528
+                outline none
+            [type="range"]::-moz-range-track
+                border inherit
+                background transparent
+            [type="range"]::-ms-track
+                border inherit
+                color transparent /* don't drawn vertical reference line */
+                background transparent
+            [type="range"]::-ms-fill-lower,
+            [type="range"]::-ms-fill-upper
+                background transparent
+            [type="range"]::-ms-tooltip
+                display none
+            /* thumb */
+            [type="range"]::-webkit-slider-thumb
+                -webkit-appearance none
+                width 20px
+                height 12px
+                border none
+                border-radius 12px
+                background-image repeating-linear-gradient(#34495e 0%, #7f8c8d 50%, #34495e 100%)
+            [type="range"]::-moz-range-thumb
+                width 40px
+                height 18px
+                border none
+                border-radius 12px
+                background-image repeating-linear-gradient(#529de1 0%, #245e8f 100%)
+            [type="range"]::-ms-thumb
+                width 40px
+                height 18px
+                border-radius 12px
+                border 0
+                background-image repeating-linear-gradient(#529de1 0%, #245e8f 100%)
     .distance
         position absolute
         top 0

@@ -141,6 +141,7 @@ module.exports = BackBone.Router.extend( {
 
             // On stocke la map et ses marqueurs
             window.app.currentPosition = oPosition;
+            window.app.currentRadius = 5;
 
             that.views.main.initMap( window.app.map = new MapView(oPosition) );
 
@@ -165,7 +166,7 @@ module.exports = BackBone.Router.extend( {
                     data: {
                         latitude: fLatitude ? fLatitude : oPosition.latitude,
                         longitude: fLongitude ? fLongitude : oPosition.longitude,
-                        radius : fRadius ? fRadius : 5
+                        radius : fRadius ? fRadius : window.app.currentRadius
                     },
                     success: function () {
                         that.views.main.clearContent();
@@ -270,7 +271,7 @@ module.exports = BackBone.View.extend({
     showList: function ( e ) {
         e.preventDefault();
 
-        window.app.router.navigate( "terminals/list/5/" + window.app.currentPosition.latitude + "/" + window.app.currentPosition.longitude, true );
+        window.app.router.navigate( "terminals/list/" + window.app.currentRadius + "/" + window.app.currentPosition.latitude + "/" + window.app.currentPosition.longitude, true );
     }
 });
 
@@ -443,7 +444,7 @@ module.exports = BackBone.View.extend({
                 longitude: that.positionMarker.getPosition().lng()
             };
             window.app.currentPosition = oPosition;
-            window.app.router.navigate( "terminals/list/5/" + oPosition.latitude + "/" + oPosition.longitude, true );
+            window.app.router.navigate( "terminals/list/" + window.app.currentRadius + "/" + oPosition.latitude + "/" + oPosition.longitude, true );
         });
     },
 
@@ -696,7 +697,9 @@ module.exports = BackBone.View.extend({
         }
     },
 
-    events: {},
+    events: {
+        "change #radius": "changeRadius"
+    },
 
     setStatus: function ( sStatut ) {
         this.$el.find( "#status .text" ).text(sStatut);
@@ -709,11 +712,18 @@ module.exports = BackBone.View.extend({
 
         var $list = this.$el.find( "ul" );
 
+        this.$el.find( "#radius" ).val( window.app.currentRadius );
+
         this.collection.each( function ( oTerminalModel ) {
             ( new TerminalElementView( oTerminalModel ) ).render().$el.appendTo( $list );
         } );
 
         return this;
+    },
+
+    changeRadius: function ( e ) {
+        window.app.currentRadius = e.target.value;
+        window.app.router.navigate( "terminals/list/" + window.app.currentRadius + "/" + window.app.currentPosition.latitude + "/" + window.app.currentPosition.longitude, true );
     }
 });
 

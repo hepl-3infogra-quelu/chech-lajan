@@ -33,7 +33,9 @@ module.exports = BackBone.View.extend({
         }
     },
 
-    events: {},
+    events: {
+        "change #radius": "changeRadius"
+    },
 
     setStatus: function ( sStatut ) {
         this.$el.find( "#status .text" ).text(sStatut);
@@ -46,10 +48,17 @@ module.exports = BackBone.View.extend({
 
         var $list = this.$el.find( "ul" );
 
+        this.$el.find( "#radius" ).val( window.app.currentRadius );
+
         this.collection.each( function ( oTerminalModel ) {
             ( new TerminalElementView( oTerminalModel ) ).render().$el.appendTo( $list );
         } );
 
         return this;
+    },
+
+    changeRadius: function ( e ) {
+        window.app.currentRadius = e.target.value;
+        window.app.router.navigate( "terminals/list/" + window.app.currentRadius + "/" + window.app.currentPosition.latitude + "/" + window.app.currentPosition.longitude, true );
     }
 });

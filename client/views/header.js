@@ -75,6 +75,6 @@ module.exports = BackBone.View.extend({
     showList: function ( e ) {
         e.preventDefault();
 
-        window.app.router.navigate( "terminals/list/5/" + window.app.currentPosition.latitude + "/" + window.app.currentPosition.longitude, true );
+        window.app.router.navigate( "terminals/list/" + window.app.currentRadius + "/" + window.app.currentPosition.latitude + "/" + window.app.currentPosition.longitude, true );
     }
 });

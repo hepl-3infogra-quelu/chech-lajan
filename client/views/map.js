@@ -95,7 +95,7 @@ module.exports = BackBone.View.extend({
                 longitude: that.positionMarker.getPosition().lng()
             };
             window.app.currentPosition = oPosition;
-            window.app.router.navigate( "terminals/list/5/" + oPosition.latitude + "/" + oPosition.longitude, true );
+            window.app.router.navigate( "terminals/list/" + window.app.currentRadius + "/" + oPosition.latitude + "/" + oPosition.longitude, true );
         });
     },
 

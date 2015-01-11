@@ -14,7 +14,7 @@ var api = require( root + "/core/middlewares/api.js" ),
 
 var Terminal = db.get( "Terminal" );
 
-var iMaxSearchRadius = 20,
+var iMaxSearchRadius = 40,
     iArcKilometer = 0.009259;
 // [GET] /api/terminals
 
@@ -64,7 +64,7 @@ var list = function( oRequest, oResponse ) {
             aCleanedTerminals.sort( function( oOne, oTwo ) {
                 return oOne.distance - oTwo.distance;
             } );
-            aSplicedTerminals = aCleanedTerminals.splice( 0, 10 );
+            aSplicedTerminals = aCleanedTerminals.splice( 0, 999 );
             api.send( oRequest, oResponse, aSplicedTerminals );
         } );
 

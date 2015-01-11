@@ -55,6 +55,7 @@ module.exports = BackBone.Router.extend( {
 
             // On stocke la map et ses marqueurs
             window.app.currentPosition = oPosition;
+            window.app.currentRadius = 5;
 
             that.views.main.initMap( window.app.map = new MapView(oPosition) );
 
@@ -79,7 +80,7 @@ module.exports = BackBone.Router.extend( {
                     data: {
                         latitude: fLatitude ? fLatitude : oPosition.latitude,
                         longitude: fLongitude ? fLongitude : oPosition.longitude,
-                        radius : fRadius ? fRadius : 5
+                        radius : fRadius ? fRadius : window.app.currentRadius
                     },
                     success: function () {
                         that.views.main.clearContent();
