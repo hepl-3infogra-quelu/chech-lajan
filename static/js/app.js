@@ -37,7 +37,6 @@ $( function() {
 
 var _             = require( "underscore" ),
     $             = require( "jquery" ),
-    jeolok        = require( "jeolok" ),
     BackBone      = require( "backbone" );
 
 BackBone.$    = require( "jquery" );
@@ -54,7 +53,7 @@ module.exports = BackBone.Collection.extend({
 
 });
 
-},{"../models/terminal":3,"backbone":"backbone","jeolok":"jeolok","jquery":"jquery","underscore":"underscore"}],3:[function(require,module,exports){
+},{"../models/terminal":3,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],3:[function(require,module,exports){
 /* Chèch Lajan
 *
 * /models/terminal.js - backbone model for terminal
@@ -65,7 +64,6 @@ module.exports = BackBone.Collection.extend({
 "use strict";
 
 var _             = require( "underscore" ),
-    jeolok        = require( "jeolok" ),
     $             = require( "jquery" ),
     BackBone      = require( "backbone" );
 
@@ -86,7 +84,7 @@ module.exports = BackBone.Model.extend( {
 
 });
 
-},{"backbone":"backbone","jeolok":"jeolok","jquery":"jquery","underscore":"underscore"}],4:[function(require,module,exports){
+},{"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],4:[function(require,module,exports){
 /* Chèch Lajan
 *
 * /router.js - backbone router
@@ -119,7 +117,6 @@ module.exports = BackBone.Router.extend( {
 
     routes: {
         "terminals/list/:radius/:latitude/:longitude": "showTerminalsList",
-        "terminals/map": "showTerminalsMap",
         "terminals/details/:id": "showTerminalDetails",
         "": "showTerminalsList"
     },
@@ -175,10 +172,6 @@ module.exports = BackBone.Router.extend( {
                         that.views.list.setStatus( oTerminalsCollection.length + " résultats" );
                     }
                 } );
-    },
-
-    showTerminalsMap: function () {
-        console.log( "showTerminalsMap" );
     },
 
     showTerminalDetails: function ( sTerminalId ) {
@@ -449,6 +442,10 @@ module.exports = BackBone.View.extend({
         this.positionMarker = this.newMarker( oPosition, 'me', 'bounce', true, true );
     },
 
+    centerMap: function(oPosition) {
+        this.gMap.setCenter(oPosition);
+    },
+
     refresh: function (oPosition) {
         var oPos = new google.maps.LatLng( oPosition.latitude, oPosition.longitude );
 
@@ -497,7 +494,8 @@ module.exports = BackBone.View.extend({
     },
 
     events: {
-        "click .problems a": "toggleEmptyState",
+        "click .showProblems": "showProblems",
+        "click #empty_terminal": "toggleEmptyState",
         "click #refresh-me": "refreshPosition"
     },
 
@@ -506,9 +504,6 @@ module.exports = BackBone.View.extend({
         if (bUpdateMarker == undefined) {
             bUpdateMarker = true;
         }
-
-        console.log('updatedAt');
-        console.log(this.model.get("date"));
 
         var oBank = this.model.get( "bank" );
 
@@ -550,30 +545,36 @@ module.exports = BackBone.View.extend({
             .find( "address" )
                 .text( this.model.get( "address" ) )
                 .end()
-            .find( ".empty" )
+            .find( ".problem" )
                 .toggle( this.model.get( "empty" ) )
                 .end()
-            .find( ".problem" )
-                // .toggle( this.model.get( "empty" ) )
+            .find( ".problems-container" )
+                .toggle( !this.model.get( "empty" ) )
                 .end()
+            .find( ".problems" )
+                .toggle( this.model.get( "empty" ) )
+                .end();
         return this;
     },
 
-    toggleEmptyState: function ( e ) {
+    showProblems: function ( e ) {
         e.preventDefault();
-        var that = this;
-        this.model.set( "empty", false );
-        this.model.save( null, {
-            "url": "/api/terminals/" + this.model.get( "id" ) + "/empty",
-            "success": function() {
-                that.$el
-                    .find( "empty" )
-                        .show()
-                        .end()
-                    .find( ".problems" )
-                        .hide();
-            }
-        } );
+
+        $(".problems").toggle();
+    },
+
+    toggleEmptyState: function( e ) {
+        e.preventDefault();
+
+        if ( window.confirm( "Voulez vous vraiment mettre ce distributeur à jour ?" ) ) {
+            this.model.set("empty", true );
+            this.model.save( null, {
+                url: "/api/terminals/" + this.model.get( "id" ) + "/empty",
+                success: function() {
+                    $(".problems").show();
+                }
+            } );
+        }
     }
 });
 
@@ -626,11 +627,19 @@ module.exports = BackBone.View.extend({
         // Création des marqueurs
 
         var status = (this.model.get('empty')) ? 'empty' : 'money';
+        var that = this;
 
-        window.app.map.markers.push( window.app.map.newMarker({
+        var marker = window.app.map.newMarker( {
             latitude: this.model.get('latitude'),
             longitude: this.model.get('longitude')
-        }, status) );
+        }, status );
+
+        google.maps.event.addListener( marker, 'click', function() {
+            window.app.map.centerMap(marker.getPosition());
+            window.app.router.navigate( "terminals/details/" + that.model.get( "id" ), true );
+        } );
+
+        window.app.map.markers.push( marker );
 
         this.$el
             .html( _tpl )

@@ -34,7 +34,8 @@ module.exports = BackBone.View.extend({
     },
 
     events: {
-        "click .problems a": "toggleEmptyState",
+        "click .showProblems": "showProblems",
+        "click #empty_terminal": "toggleEmptyState",
         "click #refresh-me": "refreshPosition"
     },
 
@@ -43,9 +44,6 @@ module.exports = BackBone.View.extend({
         if (bUpdateMarker == undefined) {
             bUpdateMarker = true;
         }
-
-        console.log('updatedAt');
-        console.log(this.model.get("date"));
 
         var oBank = this.model.get( "bank" );
 
@@ -87,29 +85,35 @@ module.exports = BackBone.View.extend({
             .find( "address" )
                 .text( this.model.get( "address" ) )
                 .end()
-            .find( ".empty" )
+            .find( ".problem" )
                 .toggle( this.model.get( "empty" ) )
                 .end()
-            .find( ".problem" )
-                // .toggle( this.model.get( "empty" ) )
+            .find( ".problems-container" )
+                .toggle( !this.model.get( "empty" ) )
                 .end()
+            .find( ".problems" )
+                .toggle( this.model.get( "empty" ) )
+                .end();
         return this;
     },
 
-    toggleEmptyState: function ( e ) {
+    showProblems: function ( e ) {
         e.preventDefault();
-        var that = this;
-        this.model.set( "empty", false );
-        this.model.save( null, {
-            "url": "/api/terminals/" + this.model.get( "id" ) + "/empty",
-            "success": function() {
-                that.$el
-                    .find( "empty" )
-                        .show()
-                        .end()
-                    .find( ".problems" )
-                        .hide();
-            }
-        } );
+
+        $(".problems").toggle();
+    },
+
+    toggleEmptyState: function( e ) {
+        e.preventDefault();
+
+        if ( window.confirm( "Voulez vous vraiment mettre ce distributeur à jour ?" ) ) {
+            this.model.set("empty", true );
+            this.model.save( null, {
+                url: "/api/terminals/" + this.model.get( "id" ) + "/empty",
+                success: function() {
+                    $(".problems").show();
+                }
+            } );
+        }
     }
 });

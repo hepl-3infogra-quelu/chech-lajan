@@ -46,11 +46,19 @@ module.exports = BackBone.View.extend({
         // Création des marqueurs
 
         var status = (this.model.get('empty')) ? 'empty' : 'money';
+        var that = this;
 
-        window.app.map.markers.push( window.app.map.newMarker({
+        var marker = window.app.map.newMarker( {
             latitude: this.model.get('latitude'),
             longitude: this.model.get('longitude')
-        }, status) );
+        }, status );
+
+        google.maps.event.addListener( marker, 'click', function() {
+            window.app.map.centerMap(marker.getPosition());
+            window.app.router.navigate( "terminals/details/" + that.model.get( "id" ), true );
+        } );
+
+        window.app.map.markers.push( marker );
 
         this.$el
             .html( _tpl )

@@ -38,7 +38,7 @@ module.exports = function(db, Mongoose, MongooseUtils) {
     oSchema.methods.clean = function( oPosition ) {
         // cleaning empty state
         if ( this.empty ) {
-            if (this.updatedAt.getDate() != ( new Date() ).getDate() ) {
+            if( this.updatedAt.getDate() !== ( new Date() ).getDate() ) {
                 this.empty = false;
                 this.save();
             }

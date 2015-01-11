@@ -460,6 +460,12 @@ header nav#menu .refresh {
   color: #fff;
   background: #16a085;
 }
+#main .showProblems a {
+  display: block;
+  padding: 1em 0 1em 40px;
+  background: #d35400 url("../img/icon-flag.png") 5% center no-repeat;
+  color: #fff;
+}
 #main .problem {
   display: block;
   padding: 1em 0;

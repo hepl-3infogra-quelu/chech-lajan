@@ -8,7 +8,6 @@
 "use strict";
 
 var _             = require( "underscore" ),
-    jeolok        = require( "jeolok" ),
     $             = require( "jquery" ),
     BackBone      = require( "backbone" );
 

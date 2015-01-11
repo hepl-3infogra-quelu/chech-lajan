@@ -73,37 +73,36 @@ var list = function( oRequest, oResponse ) {
 var empty = function( oRequest, oResponse ) {
     Terminal
         .findById( oRequest.params.id )
-        .exec(function( oError, oTerminal ) {
-            if ( !oTerminal ) {
-                return api.error( oRequest, oResponse, "TERMINAL_UNKNOWN" );
-            }
-            if ( oError ) {
+        .exec( function( oError, oTerminal ) {
+            if( oError ) {
                 return api.error( oRequest, oResponse, oError.type, oError );
+            }
+            if( !oTerminal ) {
+                return api.error( oRequest, oResponse, "TERMINAL_UNKNOWN" );
             }
             oTerminal.empty = true;
             oTerminal.save( function( oError, oSavedTerminal ) {
-                if (oError) {
+                if( oError ) {
                     return api.error( oRequest, oResponse, oError.type, oError );
-                };
-                api.send( oRequest, oResponse, true);
+                }
+                api.send( oRequest, oResponse, true );
             } );
-        });
+        } );
 };
 
 var details = function( oRequest, oResponse ) {
     Terminal
         .findById( oRequest.params.id )
-        .populate("bank")
-        .exec(function( oError, oTerminal ) {
-            if ( !oTerminal ) {
-                return api.error( oRequest, oResponse, "TERMINAL_UNKNOWN" );
-            }
-            if ( oError ) {
+        .populate( "bank" )
+        .exec( function( oError, oTerminal ) {
+            if( oError ) {
                 return api.error( oRequest, oResponse, oError.type, oError );
             }
-            oTerminal.empty = true;
+            if( !oTerminal ) {
+                return api.error( oRequest, oResponse, "TERMINAL_UNKNOWN" );
+            }
             api.send( oRequest, oResponse, oTerminal.clean() );
-        });
+        } );
 };
 
 // Declare routes

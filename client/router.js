@@ -30,7 +30,6 @@ module.exports = BackBone.Router.extend( {
 
     routes: {
         "terminals/list/:radius/:latitude/:longitude": "showTerminalsList",
-        "terminals/map": "showTerminalsMap",
         "terminals/details/:id": "showTerminalDetails",
         "": "showTerminalsList"
     },
@@ -86,10 +85,6 @@ module.exports = BackBone.Router.extend( {
                         that.views.list.setStatus( oTerminalsCollection.length + " résultats" );
                     }
                 } );
-    },
-
-    showTerminalsMap: function () {
-        console.log( "showTerminalsMap" );
     },
 
     showTerminalDetails: function ( sTerminalId ) {

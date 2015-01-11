@@ -96,6 +96,10 @@ module.exports = BackBone.View.extend({
         this.positionMarker = this.newMarker( oPosition, 'me', 'bounce', true, true );
     },
 
+    centerMap: function(oPosition) {
+        this.gMap.setCenter(oPosition);
+    },
+
     refresh: function (oPosition) {
         var oPos = new google.maps.LatLng( oPosition.latitude, oPosition.longitude );
 
