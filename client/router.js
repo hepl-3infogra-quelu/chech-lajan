@@ -61,7 +61,7 @@ module.exports = BackBone.Router.extend( {
 
             // 3. launch router
             BackBone.history.start( {
-                pushState: true
+                // pushState: true
             } );
 
         } );

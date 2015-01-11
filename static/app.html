@@ -19,7 +19,7 @@
         <nav id="menu" class="col2">
             <a href="" title="Liste des distributeurs proches" class="list" id="list">Liste</a>
             <a href="" title="Ajouter un distributeur" class="add" id="add">Ajouter</a>
-            <a href="" title="Ajouter un distributeur" class="refresh" id="refresh">Rafraichir</a>
+            <a href="" title="Mettre à jour la position" class="refresh" id="refresh">Rafraichir</a>
         </nav>
     </script>
 
@@ -66,6 +66,30 @@
             </p>
             <div class="problems">
                 <a href="#" id="empty_terminal">Distributeur vide ou en panne</a>
+                <a href="#" id="modif_terminal">Modifier le distributeur</a>
+            </div>
+            <div class="editInfo">
+                <label for="addressBox">Nouvelle adresse</label>
+                <input id="addressBox" type="text" name="address" placeholder="Rue, code postal, ville"/>
+                <p class="error" id="error_address">Erreur : L&apos;adresse entrée est introuvable</p>
+                <!--<label for="bankselect">Nom de la banque</label>
+                <select id="bankselect">
+                    <option value="53937660e0b8c05979c6ea55">Argenta</option>
+                    <option value="53937660e0b8c05979c6ea56">AXA</option>
+                    <option value="53937660e0b8c05979c6ea57">Belfius</option>
+                    <option value="53937660e0b8c05979c6ea58">BeoBank</option>
+                    <option value="53937660e0b8c05979c6ea59">BPost Banque</option>
+                    <option value="53937660e0b8c05979c6ea5a">Crelan</option>
+                    <option value="53937660e0b8c05979c6ea5b">CBC</option>
+                    <option value="53937660e0b8c05979c6ea5c">KBC</option>
+                    <option value="53937660e0b8c05979c6ea5d">Keytrade Bank</option>
+                    <option value="53937660e0b8c05979c6ea5e">BNP Paribas Fortis</option>
+                    <option value="53937660e0b8c05979c6ea5f">ING</option>
+                    <option value="53937660e0b8c05979c6ea60">BKCP</option>
+                    <option value="53937660e0b8c05979c6ea61">Delta Lloyd Bank</option>
+                    <option value="53937660e0b8c05979c6ea62">Deutsche Bank</option>
+                </select>-->
+                <button class="sendButton" id="save_terminal">Modifier</button>
             </div>
         </div>
     </script>
@@ -80,7 +104,7 @@
         }
     </script>
     <script type="text/javascript" src="js/app.min.js"></script>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBNV1rxti4vR6khDSlCBIOTj_Pvc_xF5AI"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBNV1rxti4vR6khDSlCBIOTj_Pvc_xF5AI&libraries=places"></script>
 
 </body>
 </html>

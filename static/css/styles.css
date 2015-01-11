@@ -354,6 +354,10 @@ body {
     width: 60%;
   }
 }
+.error {
+  color: #d35400;
+  display: none;
+}
 header {
   height: 100px;
   color: #fff;
@@ -537,6 +541,20 @@ header nav#menu .refresh {
   padding: 1em;
   color: #fff;
   border-bottom: 1px #fff solid;
+}
+#main .editInfo {
+  display: none;
+  margin: 1em;
+}
+#main .editInfo label {
+  display: block;
+  line-height: 2em;
+  cursor: pointer;
+}
+#main .editInfo input[type=text] {
+  display: block;
+  height: 35px;
+  width: 100%;
 }
 #main #map-canvas {
   height: 100%;

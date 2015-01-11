@@ -36,7 +36,8 @@ module.exports = BackBone.View.extend({
     events: {
         "click .showProblems": "showProblems",
         "click #empty_terminal": "toggleEmptyState",
-        "click #refresh-me": "refreshPosition"
+        "click #modif_terminal": "editTerminal",
+        "click #save_terminal": "saveTerminal"
     },
 
     render: function () {
@@ -107,6 +108,34 @@ module.exports = BackBone.View.extend({
                     that.render();
                 }
             } );
+        }
+    },
+
+    editTerminal: function ( e ) {
+        e.preventDefault();
+
+        $(".editInfo").toggle();
+
+        window.app.map.initSearchBox();
+    },
+
+    saveTerminal: function ( e ) {
+        var newAddress = window.app.map.getSearchPostion();
+        var that = this;
+
+        if (newAddress) {
+            this.model.save( null, {
+                url: "/api/terminals/" + this.model.get( "id" ) +
+                     "/" + newAddress.address +
+                     "/" + newAddress.coords.lat() +
+                     "/" + newAddress.coords.lng() + "/newaddress",
+                success: function() {
+                    window.app.map.deleteMarker(window.app.map.markers[0]);
+                    window.app.router.showTerminalDetails( that.model.get( "id" ) );
+                }
+            } );
+        } else {
+            $("#error_address").show();
         }
     }
 });

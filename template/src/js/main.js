@@ -11,7 +11,12 @@
 			zoomControl: true,
 			scrollWheel: false
 		};
+
 		gMap = new google.maps.Map( $map[ 0 ], oMapOptions );
+		var input = document.getElementById('addressBox');
+
+		var autocomplete = new google.maps.places.Autocomplete(input);
+		autocomplete.bindTo('bounds', gMap);;
 	}
 
 	var _newMarker = function(oPosition, sType, sAnimation) {
@@ -26,7 +31,7 @@
 	}
 
 	var _populateMap = function() {
-		
+
 	};
 
 	var _getPositionSuccess = function(oPosition) {
@@ -83,7 +88,7 @@
 		$map = $( '#map-canvas' );
 		_initMap();
 
-		navigator.geolocation && 
+		navigator.geolocation &&
 		navigator.geolocation.getCurrentPosition( _getPositionSuccess, _getPositionError, {
 			"enableHighAccuracy": true
 		} );

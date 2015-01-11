@@ -147,7 +147,7 @@ module.exports = BackBone.Router.extend( {
 
             // 3. launch router
             BackBone.history.start( {
-                pushState: true
+                // pushState: true
             } );
 
         } );
@@ -372,6 +372,7 @@ module.exports = BackBone.View.extend({
     $map: null,
     markers: [],
     positionMarker: null,
+    searchBox: null,
 
     constructor: function (oPosition) {
         BackBone.View.apply( this, arguments );
@@ -427,6 +428,11 @@ module.exports = BackBone.View.extend({
         });
     },
 
+    deleteMarker: function (oMarker) {
+        oMarker.setMap(null);
+        oMarker = null;
+    },
+
     setPosition: function(oPosition) {
         if (this.positionMarker) {
             google.maps.event.clearInstanceListeners(this.positionMarker);
@@ -459,6 +465,32 @@ module.exports = BackBone.View.extend({
         this.centerMap(oPos);
 
         console.log('refresh');
+    },
+
+    initSearchBox: function () {
+        var input = document.getElementById( "addressBox" );
+
+        this.searchBox = new google.maps.places.Autocomplete(input);
+
+        this.searchBox.bindTo('bounds', this.gMap);
+    },
+
+    getSearchPostion: function () {
+        var place = this.searchBox.getPlace();
+
+        if (place) {
+            var oPosition = new google.maps.LatLng( place.geometry.location.k, place.geometry.location.D )
+
+            this.centerMap(oPosition);
+
+            return {
+                coords: oPosition,
+                address: place.formatted_address
+            };
+        } else {
+            return false;
+        }
+
     }
 });
 
@@ -501,7 +533,8 @@ module.exports = BackBone.View.extend({
     events: {
         "click .showProblems": "showProblems",
         "click #empty_terminal": "toggleEmptyState",
-        "click #refresh-me": "refreshPosition"
+        "click #modif_terminal": "editTerminal",
+        "click #save_terminal": "saveTerminal"
     },
 
     render: function () {
@@ -572,6 +605,34 @@ module.exports = BackBone.View.extend({
                     that.render();
                 }
             } );
+        }
+    },
+
+    editTerminal: function ( e ) {
+        e.preventDefault();
+
+        $(".editInfo").toggle();
+
+        window.app.map.initSearchBox();
+    },
+
+    saveTerminal: function ( e ) {
+        var newAddress = window.app.map.getSearchPostion();
+        var that = this;
+
+        if (newAddress) {
+            this.model.save( null, {
+                url: "/api/terminals/" + this.model.get( "id" ) +
+                     "/" + newAddress.address +
+                     "/" + newAddress.coords.lat() +
+                     "/" + newAddress.coords.lng() + "/newaddress",
+                success: function() {
+                    window.app.map.deleteMarker(window.app.map.markers[0]);
+                    window.app.router.showTerminalDetails( that.model.get( "id" ) );
+                }
+            } );
+        } else {
+            $("#error_address").show();
         }
     }
 });
