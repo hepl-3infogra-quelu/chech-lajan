@@ -30,15 +30,8 @@ oApp.use( oMiddlewares.log );
 // Configure static files (usualy handled by nginx)
 oApp.use( express.static( root + "/../static" ) );
 
-// Set up jade template engine
-oApp.set( "view engine", "jade" );
-oApp.set( "views", root + "/views" );
-oApp.locals.pretty = !pkg.config.express.cache;
-oApp.set( "view cache", pkg.config.express.cache );
-
 // require routes
 require( root + "/routes/pages.js" ).init( oApp );
-require( root + "/routes/api/dev.js" ).init( oApp );
 require( root + "/routes/api/banks.js" ).init( oApp );
 require( root + "/routes/api/terminals.js" ).init( oApp );
 
