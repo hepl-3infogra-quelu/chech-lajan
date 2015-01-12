@@ -24,12 +24,14 @@ module.exports = BackBone.View.extend({
     markers: [],
     positionMarker: null,
     searchBox: null,
+    zoom: null,
 
-    constructor: function (oPosition) {
+    constructor: function (oPosition, zoom) {
         BackBone.View.apply( this, arguments );
 
         console.log( "MapView:init()" );
 
+        this.zoom = zoom;
         this.$map = $( '#map-canvas' );
         this.initMap();
 
@@ -52,7 +54,7 @@ module.exports = BackBone.View.extend({
 
     initMap: function () {
         var oMapOptions = {
-            zoom: 15,
+            zoom: this.zoom,
             disableDefaultUI: true,
             zoomControl: true,
             scrollWheel: false
@@ -74,7 +76,7 @@ module.exports = BackBone.View.extend({
             position: oPos,
             map: this.gMap,
             animation: google.maps.Animation[ sAnimation.toUpperCase() ],
-            icon: '/img/marker-' + sType + '.png',
+            icon: new google.maps.MarkerImage( '/img/marker-' + sType + '.png', null, null, null, new google.maps.Size( 40, 57 ) ),
             draggable: bDraggable
         });
     },

@@ -33,7 +33,8 @@ module.exports = BackBone.View.extend({
 
     events: {
         "click #refresh": "refreshPosition",
-        "click #list": "showList"
+        "click #list": "showList",
+        "click #admin": "showAdmin"
     },
 
     render: function () {
@@ -66,9 +67,11 @@ module.exports = BackBone.View.extend({
 
             // On raffraichit et recentre la map
             window.app.map.refresh(oPosition);
+            window.app.map.gMap.setZoom( 13 );
 
             // On raffraichit la distance du terminal
             window.app.router.navigate( "", true );
+
         } );
     },
 
@@ -76,5 +79,12 @@ module.exports = BackBone.View.extend({
         e.preventDefault();
 
         window.app.router.navigate( "terminals/list/" + window.app.currentRadius + "/" + window.app.currentPosition.latitude + "/" + window.app.currentPosition.longitude, true );
+    },
+
+    showAdmin: function ( e ) {
+        e.preventDefault();
+
+        window.app.router.navigate( "admin", true );
+        window.app.map.gMap.setZoom( 8 );
     }
 });

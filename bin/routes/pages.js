@@ -12,7 +12,13 @@ var homepage = function( oRequest, oResponse ) {
     oResponse.sendFile( require( "path" ).resolve( root + "/../static/app.html" ) );
 };
 
+// [GET] / - admin
+var admin = function( oRequest, oResponse ) {
+    oResponse.sendFile( require( "path" ).resolve( root + "/../static/app.html" ) );
+};
+
 // Declare routes
 exports.init = function( oApp ) {
     oApp.get( "/", homepage );
+    // oApp.get( "/admin", admin );
 };

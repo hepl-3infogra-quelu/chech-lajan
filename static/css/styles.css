@@ -390,8 +390,8 @@ header nav#menu a {
 header nav#menu .list {
   background: #2ecc71 url("../img/icon-list.png") center 30% no-repeat;
 }
-header nav#menu .add {
-  background: #2cddc8 url("../img/icon-add.png") center 30% no-repeat;
+header nav#menu .admin {
+  background: #2cddc8 url("../img/icon-admin.png") center 30% no-repeat;
 }
 header nav#menu .refresh {
   background: #ffb87d url("../img/icon-refresh.png") center 30% no-repeat;

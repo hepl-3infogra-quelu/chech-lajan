@@ -122,7 +122,6 @@ module.exports = BackBone.View.extend({
     saveTerminal: function ( e ) {
         var newAddress = window.app.map.getSearchPostion();
         var that = this;
-
         if (newAddress) {
             this.model.save( null, {
                 url: "/api/terminals/" + this.model.get( "id" ) +

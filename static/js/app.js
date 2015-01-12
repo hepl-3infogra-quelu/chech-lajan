@@ -117,6 +117,7 @@ module.exports = BackBone.Router.extend( {
     routes: {
         "terminals/list/:radius/:latitude/:longitude": "showTerminalsList",
         "terminals/details/:id": "showTerminalDetails",
+        "admin": "showAdminList",
         "": "showTerminalsList"
     },
 
@@ -143,13 +144,12 @@ module.exports = BackBone.Router.extend( {
             window.app.currentPosition = oPosition;
             window.app.currentRadius = 5;
 
-            that.views.main.initMap( window.app.map = new MapView(oPosition) );
-
             // 3. launch router
             BackBone.history.start( {
                 // pushState: true
             } );
 
+            that.views.main.initMap( window.app.map = new MapView(oPosition, (BackBone.history.fragment == 'admin') ? 8 : 13 ) );
         } );
     },
 
@@ -157,7 +157,6 @@ module.exports = BackBone.Router.extend( {
         console.log( "showTerminalsList" );
 
         var that = this;
-        this.views.main.loading(true);
 
         var oTerminalsCollection = new TerminalsCollection();
         ( this.views.list = new TerminalsListView( oTerminalsCollection ) )
@@ -178,8 +177,9 @@ module.exports = BackBone.Router.extend( {
 
     showTerminalDetails: function ( sTerminalId ) {
         console.log( "showTerminalDetails:", sTerminalId );
+
         var that = this;
-        this.views.main.loading( true );
+
         var oTerminal = new TerminalModel( { id: sTerminalId } );
         (this.views.details = new TerminalDetailsView( oTerminal ) )
             .model
@@ -187,10 +187,33 @@ module.exports = BackBone.Router.extend( {
                     success: function () {
                         that.views.main.clearContent();
                         that.views.main.initDetails( that.views.details.render() );
-                        that.views.main.loading( false );
                     }
                 } );
-    }
+    },
+
+    showAdminList: function() {
+        console.log( "showTerminalsListAdmin" );
+
+        var that = this;
+        this.views.list.setStatus( "Chargement..." );
+
+        var oTerminalsCollection = new TerminalsCollection();
+        ( this.views.list = new TerminalsListView( oTerminalsCollection ) )
+            .collection
+                .fetch( {
+                    data: {
+                        latitude: oPosition.latitude,
+                        longitude: oPosition.longitude,
+                        radius : -1
+                    },
+                    success: function() {
+                        that.views.main.clearContent();
+                        that.views.main.initList( that.views.list.render() );
+                        that.views.list.setStatus( oTerminalsCollection.length + " résultats" );
+                    }
+                } );
+     }
+
 } );
 
 },{"./collections/terminals":2,"./models/terminal":3,"./views/header":5,"./views/main":6,"./views/map":7,"./views/terminal-details":8,"./views/terminals-list":10,"backbone":"backbone","jeolok":"jeolok","jquery":"jquery","underscore":"underscore"}],5:[function(require,module,exports){
@@ -229,7 +252,8 @@ module.exports = BackBone.View.extend({
 
     events: {
         "click #refresh": "refreshPosition",
-        "click #list": "showList"
+        "click #list": "showList",
+        "click #admin": "showAdmin"
     },
 
     render: function () {
@@ -262,9 +286,11 @@ module.exports = BackBone.View.extend({
 
             // On raffraichit et recentre la map
             window.app.map.refresh(oPosition);
+            window.app.map.gMap.setZoom( 13 );
 
             // On raffraichit la distance du terminal
             window.app.router.navigate( "", true );
+
         } );
     },
 
@@ -272,6 +298,13 @@ module.exports = BackBone.View.extend({
         e.preventDefault();
 
         window.app.router.navigate( "terminals/list/" + window.app.currentRadius + "/" + window.app.currentPosition.latitude + "/" + window.app.currentPosition.longitude, true );
+    },
+
+    showAdmin: function ( e ) {
+        e.preventDefault();
+
+        window.app.router.navigate( "admin", true );
+        window.app.map.gMap.setZoom( 8 );
     }
 });
 
@@ -373,12 +406,14 @@ module.exports = BackBone.View.extend({
     markers: [],
     positionMarker: null,
     searchBox: null,
+    zoom: null,
 
-    constructor: function (oPosition) {
+    constructor: function (oPosition, zoom) {
         BackBone.View.apply( this, arguments );
 
         console.log( "MapView:init()" );
 
+        this.zoom = zoom;
         this.$map = $( '#map-canvas' );
         this.initMap();
 
@@ -401,7 +436,7 @@ module.exports = BackBone.View.extend({
 
     initMap: function () {
         var oMapOptions = {
-            zoom: 15,
+            zoom: this.zoom,
             disableDefaultUI: true,
             zoomControl: true,
             scrollWheel: false
@@ -423,7 +458,7 @@ module.exports = BackBone.View.extend({
             position: oPos,
             map: this.gMap,
             animation: google.maps.Animation[ sAnimation.toUpperCase() ],
-            icon: '/img/marker-' + sType + '.png',
+            icon: new google.maps.MarkerImage( '/img/marker-' + sType + '.png', null, null, null, new google.maps.Size( 40, 57 ) ),
             draggable: bDraggable
         });
     },
@@ -619,7 +654,6 @@ module.exports = BackBone.View.extend({
     saveTerminal: function ( e ) {
         var newAddress = window.app.map.getSearchPostion();
         var that = this;
-
         if (newAddress) {
             this.model.save( null, {
                 url: "/api/terminals/" + this.model.get( "id" ) +

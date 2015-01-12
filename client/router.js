@@ -31,6 +31,7 @@ module.exports = BackBone.Router.extend( {
     routes: {
         "terminals/list/:radius/:latitude/:longitude": "showTerminalsList",
         "terminals/details/:id": "showTerminalDetails",
+        "admin": "showAdminList",
         "": "showTerminalsList"
     },
 
@@ -57,13 +58,12 @@ module.exports = BackBone.Router.extend( {
             window.app.currentPosition = oPosition;
             window.app.currentRadius = 5;
 
-            that.views.main.initMap( window.app.map = new MapView(oPosition) );
-
             // 3. launch router
             BackBone.history.start( {
                 // pushState: true
             } );
 
+            that.views.main.initMap( window.app.map = new MapView(oPosition, (BackBone.history.fragment == 'admin') ? 8 : 13 ) );
         } );
     },
 
@@ -71,7 +71,6 @@ module.exports = BackBone.Router.extend( {
         console.log( "showTerminalsList" );
 
         var that = this;
-        this.views.main.loading(true);
 
         var oTerminalsCollection = new TerminalsCollection();
         ( this.views.list = new TerminalsListView( oTerminalsCollection ) )
@@ -92,8 +91,9 @@ module.exports = BackBone.Router.extend( {
 
     showTerminalDetails: function ( sTerminalId ) {
         console.log( "showTerminalDetails:", sTerminalId );
+
         var that = this;
-        this.views.main.loading( true );
+
         var oTerminal = new TerminalModel( { id: sTerminalId } );
         (this.views.details = new TerminalDetailsView( oTerminal ) )
             .model
@@ -101,8 +101,31 @@ module.exports = BackBone.Router.extend( {
                     success: function () {
                         that.views.main.clearContent();
                         that.views.main.initDetails( that.views.details.render() );
-                        that.views.main.loading( false );
                     }
                 } );
-    }
+    },
+
+    showAdminList: function() {
+        console.log( "showTerminalsListAdmin" );
+
+        var that = this;
+        this.views.list.setStatus( "Chargement..." );
+
+        var oTerminalsCollection = new TerminalsCollection();
+        ( this.views.list = new TerminalsListView( oTerminalsCollection ) )
+            .collection
+                .fetch( {
+                    data: {
+                        latitude: oPosition.latitude,
+                        longitude: oPosition.longitude,
+                        radius : -1
+                    },
+                    success: function() {
+                        that.views.main.clearContent();
+                        that.views.main.initList( that.views.list.render() );
+                        that.views.list.setStatus( oTerminalsCollection.length + " résultats" );
+                    }
+                } );
+     }
+
 } );

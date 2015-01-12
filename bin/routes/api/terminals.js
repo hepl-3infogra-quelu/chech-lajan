@@ -31,9 +31,13 @@ var list = function( oRequest, oResponse ) {
 
     if ( !fLatitude || !fLongitude ) {
         return api.error( oRequest, oResponse, "TERMINALS_LIST_NO_POSITION_GIVEN", oRequest.query );
-    };
-    if ( isNaN( iGivenRadius ) || iGivenRadius > iMaxSearchRadius ) {
-        iGivenRadius = 3;
+    }
+    if ( oRequest.query.radius == -1 ) {
+        iGivenRadius = 2000;
+    } else {
+        if( isNaN( iGivenRadius ) || iGivenRadius > iMaxSearchRadius ) {
+            iGivenRadius = 5;
+        }
     }
     iSearchRadiusSize = iArcKilometer * iGivenRadius;
 
@@ -64,7 +68,12 @@ var list = function( oRequest, oResponse ) {
             aCleanedTerminals.sort( function( oOne, oTwo ) {
                 return oOne.distance - oTwo.distance;
             } );
-            aSplicedTerminals = aCleanedTerminals.splice( 0, 999 );
+            // Si administration
+            if ( oRequest.query.radius == -1 ) {
+                aSplicedTerminals = aCleanedTerminals;
+            } else {
+                aSplicedTerminals = aCleanedTerminals.splice( 0, 50 );
+            }
             api.send( oRequest, oResponse, aSplicedTerminals );
         } );
 
